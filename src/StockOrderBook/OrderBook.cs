@@ -1,0 +1,59 @@
+﻿using StockOrderBook.Entities;
+using StockOrderBook.Strategies;
+using StockOrderBook.Util;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace StockOrderBook
+{
+    class OrderBook
+    {
+        OrderQueue<Ask> Asks;
+        OrderQueue<Bid> Bids;
+        Dictionary<TradeType, ITradingStrategy<Ask>> AskStrategies;
+        Dictionary<TradeType, ITradingStrategy<Bid>> BidStrategies;
+        volatile bool TradeInProgress;
+        Object lockObj;
+
+        public OrderBook(string ticker)
+        {
+            Ticker = ticker;
+            Asks = new OrderQueue<Ask>(ticker, new AskOrderComparer());
+            Bids = new OrderQueue<Bid>(ticker, new BidOrderComparer());
+            TradeInProgress = false;
+            lockObj = new Object();
+
+            Asks.TopOrderChanged += Asks_TopOrderChanged;
+            Bids.TopOrderChanged += Bids_TopOrderChanged;
+        }
+
+        public string Ticker
+        {
+            get;
+            protected set;
+        }
+
+        public bool Ask(Ask ask)
+        {
+            return Asks.Add(ask);
+        }
+
+        public bool Bid(Bid bid)
+        {
+            return Bids.Add(bid);
+        }
+
+        private void Bids_TopOrderChanged(object sender, TopOrderChangedEventArgs eventArgs)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void Asks_TopOrderChanged(object sender, TopOrderChangedEventArgs eventArgs)
+        {
+            throw new NotImplementedException();
+        }
+    }
+}
