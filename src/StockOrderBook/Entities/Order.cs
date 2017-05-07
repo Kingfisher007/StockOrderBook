@@ -8,20 +8,22 @@ namespace StockOrderBook.Entities
 {
     public class Order
     {
-        protected Guid ID { get;  }
-        public string Ticker { get; }
-        public TradeType Trade { get; }
-        public OrderType Type { get; }
-        public int Volume { get; }
-        public DateTime Time { get; }
+        protected Guid ID { get; private set; }
+        public string Ticker { get; protected set; }
+        public TradeType Trade { get; protected set; }
+        public OrderType Type { get; protected set; }
+        public int Volume { get; protected set; }
+        public Validity GoodTill { get; protected set; }
+        public DateTime Time { get; protected set; }
 
-        protected Order(string ticker, TradeType trade, OrderType type, int volume)
+        protected Order(string ticker, int volume, TradeType trade, OrderType type, Validity goodTill)
         {
             ID = Guid.NewGuid();
             Ticker = ticker;
             Trade = trade;
             this.Type = type;
             Volume = volume;
+            GoodTill = goodTill;
             Time = DateTime.Now;
         }
 
@@ -34,9 +36,10 @@ namespace StockOrderBook.Entities
             }
 
             return orderToCompare.Ticker.Equals(this.Ticker)
-                && Trade.Equals(orderToCompare.Trade)
-                && this.Type.Equals(orderToCompare.Type)
+                && orderToCompare.Trade.Equals(this.Trade)
+                && orderToCompare.Type.Equals(this.Type)
                 && orderToCompare.Volume.Equals(this.Volume)
+                && orderToCompare.GoodTill.Equals(this.GoodTill)
                 && orderToCompare.Time.Equals(this.Time);
         }
 

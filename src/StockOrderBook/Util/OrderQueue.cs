@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace StockOrderBook.Util
 {
-    class OrderQueue<T> where T : Order
+    public class OrderQueue<T> where T : Order
     {
         SortedSet<T> Queue;
 
@@ -26,7 +26,7 @@ namespace StockOrderBook.Util
 
         public bool Add(T order)
         {
-            if (order.Ticker.Equals(Ticker))
+            if (!order.Ticker.Equals(Ticker))
             {
                 throw new Exception("Invalid order.");
             }

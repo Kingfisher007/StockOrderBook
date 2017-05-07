@@ -8,16 +8,15 @@ using System.Threading.Tasks;
 
 namespace StockOrderBook.Strategies
 {
-    class BidAllOrNoneTradingStrategy : ITradingStrategy<Bid>
+    class BidAllOrNoneTradingStrategy : BidTradingStrategy
     {
-        OrderQueue<Ask> Asks;
 
-        public BidAllOrNoneTradingStrategy(OrderQueue<Ask> asks)
+        public BidAllOrNoneTradingStrategy(OrderQueue<Ask> asks) : base(asks)
         {
-            Asks = asks;
+            
         }
 
-        public TradeExecutionResult<Bid> Execute(Bid order)
+        public override TradeExecutionResult<Bid> Execute(Bid order)
         {
             if(order == null)
             {
@@ -52,8 +51,8 @@ namespace StockOrderBook.Strategies
                         break;
                     }
 
-                    Ask newOrder = new Ask(ask.Ticker, ask.Trade, ask.Type, ask.AskPrice, cumVolume - order.Volume);
-                    ask = new Ask(ask.Ticker, ask.Trade, ask.Type, ask.AskPrice, ask.Volume - newOrder.Volume);
+                    Ask newOrder = new Ask(ask.Ticker, cumVolume - order.Volume, ask.Trade, ask.Type, ask.AskPrice, ask.GoodTill );
+                    ask = new Ask(ask.Ticker, ask.Volume - newOrder.Volume, ask.Trade,  ask.Type, ask.AskPrice, ask.GoodTill);
                     matchedOrders.Push(ask);
                     // trade
                     CreateTrades(trades, matchedOrders);

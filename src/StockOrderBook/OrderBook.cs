@@ -13,16 +13,18 @@ namespace StockOrderBook
     {
         OrderQueue<Ask> Asks;
         OrderQueue<Bid> Bids;
-        Dictionary<TradeType, ITradingStrategy<Ask>> AskStrategies;
-        Dictionary<TradeType, ITradingStrategy<Bid>> BidStrategies;
+        Dictionary<TradeType, AskTradingStrategy> AskStrategies;
+        Dictionary<TradeType, BidTradingStrategy> BidStrategies;
         volatile bool TradeInProgress;
         Object lockObj;
 
-        public OrderBook(string ticker)
+        public OrderBook(string ticker, Dictionary<TradeType, AskTradingStrategy> askStrategies, Dictionary<TradeType, BidTradingStrategy> bidStrategies)
         {
             Ticker = ticker;
             Asks = new OrderQueue<Ask>(ticker, new AskOrderComparer());
             Bids = new OrderQueue<Bid>(ticker, new BidOrderComparer());
+            AskStrategies = askStrategies;
+            BidStrategies = bidStrategies;
             TradeInProgress = false;
             lockObj = new Object();
 

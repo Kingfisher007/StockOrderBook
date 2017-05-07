@@ -10,7 +10,8 @@ namespace StockOrderBook.Entities
     {
         public float AskPrice {get; }
 
-        public Ask(string ticker, TradeType type, OrderType otype, float askPrice, int volume) : base (ticker, type, otype, volume)
+        public Ask(string ticker, int volume, TradeType type, OrderType otype, float askPrice, Validity goodTill) 
+                : base (ticker, volume, type, otype, goodTill)
         {
             AskPrice = askPrice;
         }
