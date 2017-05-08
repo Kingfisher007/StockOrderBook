@@ -8,6 +8,8 @@ namespace StockOrderBook.Entities
 {
     public enum TradeType
     {
-        AllOrNothing
+        AllOrNothing,
+        FillOrKill,
+        ImmidiateOrCancel
     }
 }

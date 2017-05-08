@@ -40,7 +40,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Entities\OrderType.cs" />
+    <Compile Include="Entities\PriceType.cs" />
     <Compile Include="Entities\TradeType.cs" />
     <Compile Include="Entities\Validity.cs" />
     <Compile Include="Strategies\AskAllOrNoneTradingStrategy.cs" />
@@ -53,8 +53,8 @@
     <Compile Include="Strategies\AskTradingStrategy.cs" />
     <Compile Include="Strategies\BidAllOrNoneTradingStrategy.cs" />
     <Compile Include="Strategies\BidTradingStrategy.cs" />
-    <Compile Include="Strategies\TradeExecutionResult.cs" />
-    <Compile Include="Strategies\TradeResult.cs" />
+    <Compile Include="Entities\TradeExecutionResult.cs" />
+    <Compile Include="Entities\TradeResult.cs" />
     <Compile Include="TradeBook.cs" />
     <Compile Include="Strategies\TradingStrategy.cs" />
     <Compile Include="Util\AskOrderComparer.cs" />

@@ -1,4 +1,4 @@
-﻿namespace StockOrderBook.Strategies
+﻿namespace StockOrderBook.Entities
 {
     public enum TradeResult
     {

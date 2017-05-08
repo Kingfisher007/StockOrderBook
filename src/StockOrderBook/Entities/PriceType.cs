@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace StockOrderBook.Entities
 {
-    public enum OrderType
+    public enum PriceType
     {
         Limit,
         Market

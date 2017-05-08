@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace StockOrderBook.Entities
 {
-    public enum Validity
+    public enum TimeInForce
     {
         GoodForDay,
         GoodUntilCancelled

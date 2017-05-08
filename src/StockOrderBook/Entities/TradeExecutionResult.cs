@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace StockOrderBook.Strategies
+namespace StockOrderBook.Entities
 {
     public class TradeExecutionResult<T> where T : Order
     {

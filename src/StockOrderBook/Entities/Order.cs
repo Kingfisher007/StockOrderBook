@@ -11,17 +11,17 @@ namespace StockOrderBook.Entities
         protected Guid ID { get; private set; }
         public string Ticker { get; protected set; }
         public TradeType Trade { get; protected set; }
-        public OrderType Type { get; protected set; }
+        public PriceType Type { get; protected set; }
         public int Volume { get; protected set; }
-        public Validity GoodTill { get; protected set; }
+        public TimeInForce GoodTill { get; protected set; }
         public DateTime Time { get; protected set; }
 
-        protected Order(string ticker, int volume, TradeType trade, OrderType type, Validity goodTill)
+        protected Order(string ticker, int volume, TradeType trade, PriceType type, TimeInForce goodTill)
         {
             ID = Guid.NewGuid();
             Ticker = ticker;
             Trade = trade;
-            this.Type = type;
+            Type = type;
             Volume = volume;
             GoodTill = goodTill;
             Time = DateTime.Now;
