@@ -50,8 +50,10 @@
     <Compile Include="Entities\Trade.cs" />
     <Compile Include="OrderBook.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Strategies\AskFillOrKillStrategy.cs" />
     <Compile Include="Strategies\AskTradingStrategy.cs" />
     <Compile Include="Strategies\BidAllOrNoneTradingStrategy.cs" />
+    <Compile Include="Strategies\BidFillOrKillStrategy.cs" />
     <Compile Include="Strategies\BidTradingStrategy.cs" />
     <Compile Include="Entities\TradeExecutionResult.cs" />
     <Compile Include="Entities\TradeResult.cs" />
