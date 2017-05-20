@@ -42,7 +42,7 @@
   <ItemGroup>
     <Compile Include="Entities\PriceType.cs" />
     <Compile Include="Entities\TradeType.cs" />
-    <Compile Include="Entities\Validity.cs" />
+    <Compile Include="Entities\TimeInForce.cs" />
     <Compile Include="Strategies\AskAllOrNoneTradingStrategy.cs" />
     <Compile Include="Entities\Ask.cs" />
     <Compile Include="Entities\Bid.cs" />
