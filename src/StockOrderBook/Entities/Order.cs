@@ -8,13 +8,13 @@ namespace StockOrderBook.Entities
 {
     public class Order
     {
-        protected Guid ID { get; private set; }
+        public Guid ID { get; private set; }
         public string Ticker { get; protected set; }
         public TradeType Trade { get; protected set; }
         public PriceType Type { get; protected set; }
         public int Volume { get; protected set; }
-        public TimeInForce GoodTill { get; protected set; }
-        public DateTime Time { get; protected set; }
+        public TimeInForce Validity { get; protected set; }
+        public DateTime Timestamp { get; protected set; }
 
         protected Order(string ticker, int volume, TradeType trade, PriceType type, TimeInForce goodTill)
         {
@@ -23,8 +23,8 @@ namespace StockOrderBook.Entities
             Trade = trade;
             Type = type;
             Volume = volume;
-            GoodTill = goodTill;
-            Time = DateTime.Now;
+            Validity = goodTill;
+            Timestamp = DateTime.Now;
         }
 
         public override bool Equals(object obj)
@@ -39,8 +39,8 @@ namespace StockOrderBook.Entities
                 && orderToCompare.Trade.Equals(this.Trade)
                 && orderToCompare.Type.Equals(this.Type)
                 && orderToCompare.Volume.Equals(this.Volume)
-                && orderToCompare.GoodTill.Equals(this.GoodTill)
-                && orderToCompare.Time.Equals(this.Time);
+                && orderToCompare.Validity.Equals(this.Validity)
+                && orderToCompare.Timestamp.Equals(this.Timestamp);
         }
 
         public override int GetHashCode()

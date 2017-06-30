@@ -1,4 +1,4 @@
-﻿using StockOrderBook.Entities;
+using StockOrderBook.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,7 +18,7 @@ namespace StockOrderBook.Util
                 return (int)(100 * (y.AskPrice - x.AskPrice));
             }
             // compare time if prices result in a tie.
-            return y.Time <= x.Time ? 1 : -1;
+            return y.Timestamp <= x.Timestamp ? 1 : -1;
         }
     }
 }

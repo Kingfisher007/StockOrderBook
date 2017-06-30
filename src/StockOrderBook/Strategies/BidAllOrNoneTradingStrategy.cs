@@ -20,7 +20,7 @@ namespace StockOrderBook.Strategies
         {
             if(order == null)
             {
-                throw new ArgumentNullException("order");
+				throw new ArgumentNullException(nameof(order));
             }
 
             if(Asks == null 
@@ -51,28 +51,25 @@ namespace StockOrderBook.Strategies
                         break;
                     }
 
-                    Ask newOrder = new Ask(ask.Ticker, cumVolume - order.Volume, ask.Trade, ask.Type, ask.AskPrice, ask.GoodTill );
-                    ask = new Ask(ask.Ticker, ask.Volume - newOrder.Volume, ask.Trade,  ask.Type, ask.AskPrice, ask.GoodTill);
+                    Ask newOrder = new Ask(ask.Ticker, cumVolume - order.Volume, ask.Trade, ask.Type, ask.AskPrice, ask.Validity );
+                    ask = new Ask(ask.Ticker, ask.Volume - newOrder.Volume, ask.Trade,  ask.Type, ask.AskPrice, ask.Validity);
                     matchedOrders.Push(ask);
                     // trade
-                    CreateTrades(trades, matchedOrders);
+					CreateTrades(order.ID, trades, matchedOrders);
+					result = TradeResult.Traded;
                     break;
                 }
 
                 if(cumVolume == order.Volume)
                 {
                     // trades
-                    CreateTrades(trades, matchedOrders);
+					CreateTrades(order.ID, trades, matchedOrders);
+					result = TradeResult.Traded;
                     break;
                 }
             }
 
             return new TradeExecutionResult<Bid>(result, order, trades);
-        }
-
-        private void CreateTrades(List<Trade> trades, IEnumerable<Ask> orders)
-        {
-
         }
     }
 }
