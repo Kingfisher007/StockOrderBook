@@ -19,12 +19,14 @@ namespace StockOrderBook.Strategies
 
         public abstract TradeExecutionResult<Bid> Execute(Bid order);
 
-		protected void CreateTrades(Guid bidOrderID, List<Trade> trades, IEnumerable<Ask> orders)
+		protected List<Trade> CreateTrades(Bid order, IEnumerable<Ask> orders)
 		{
+			List<Trade> trades = new List<Trade>();
 			foreach (Ask askOrder in orders)
 			{
-				trades.Add(new Trade(askOrder.Ticker, bidOrderID, askOrder.ID, askOrder.AskPrice, askOrder.TradedVolume));
+				trades.Add(new Trade(askOrder.Ticker, order.ID, askOrder.ID, askOrder.AskPrice, askOrder.TradedVolume));
 			}
+			return trades;
 		}
     }
 }

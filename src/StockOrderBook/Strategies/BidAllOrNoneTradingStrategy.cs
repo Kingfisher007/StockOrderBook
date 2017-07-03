@@ -30,7 +30,7 @@ namespace StockOrderBook.Strategies
                 throw new ApplicationException("No orders to trade");
             }
 
-            List<Trade> trades = new List<Trade>();
+			List<Trade> trades = default(List<Trade>);
             int cumVolume = 0;
             Ask ask;
             TradeResult result = TradeResult.NotTraded;
@@ -42,7 +42,7 @@ namespace StockOrderBook.Strategies
 			{
 				ask = enumerator.Current;
 
-				if (ask.AskPrice < order.BidPrice)
+				if (ask.AskPrice > order.BidPrice)
 				{					break;
 				}
 
@@ -76,7 +76,7 @@ namespace StockOrderBook.Strategies
 			if (cumVolume == order.Volume)
 			{
 				// trades
-				CreateTrades(order.ID, trades, matchedOrders);
+				trades = CreateTrades(order, matchedOrders);
 				Asks.Remove(matchedOrders.ToList());
 				result = TradeResult.Traded;
 			}
