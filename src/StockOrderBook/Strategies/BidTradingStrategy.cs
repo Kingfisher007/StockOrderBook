@@ -23,7 +23,7 @@ namespace StockOrderBook.Strategies
 		{
 			foreach (Ask askOrder in orders)
 			{
-				trades.Add(new Trade(askOrder.Ticker, bidOrderID, askOrder.ID, askOrder.AskPrice, askOrder.Volume));
+				trades.Add(new Trade(askOrder.Ticker, bidOrderID, askOrder.ID, askOrder.AskPrice, askOrder.TradedVolume));
 			}
 		}
     }

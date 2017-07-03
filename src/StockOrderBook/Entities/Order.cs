@@ -13,6 +13,7 @@ namespace StockOrderBook.Entities
         public TradeType Trade { get; protected set; }
         public PriceType Type { get; protected set; }
         public int Volume { get; protected set; }
+		public int TradedVolume { get; set; }
         public TimeInForce Validity { get; protected set; }
         public DateTime Timestamp { get; protected set; }
 
@@ -23,6 +24,7 @@ namespace StockOrderBook.Entities
             Trade = trade;
             Type = type;
             Volume = volume;
+			TradedVolume = volume;
             Validity = goodTill;
             Timestamp = DateTime.Now;
         }

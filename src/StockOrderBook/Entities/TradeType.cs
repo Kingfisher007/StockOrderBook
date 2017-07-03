@@ -10,6 +10,7 @@ namespace StockOrderBook.Entities
     {
         AllOrNothing,
         FillOrKill,
-        ImmidiateOrCancel
+        ImmidiateOrCancel,
+		AllowPartial
     }
 }

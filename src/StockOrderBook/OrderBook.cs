@@ -50,12 +50,22 @@ namespace StockOrderBook
 
         private void Bids_TopOrderChanged(object sender, TopOrderChangedEventArgs eventArgs)
         {
-            throw new NotImplementedException();
+			if (!TradeInProgress)
+			{
+				TradeInProgress = true;
+
+				TradeInProgress = false;
+			}
         }
 
         private void Asks_TopOrderChanged(object sender, TopOrderChangedEventArgs eventArgs)
         {
-            throw new NotImplementedException();
+            if (!TradeInProgress)
+			{
+				TradeInProgress = true;
+
+				TradeInProgress = false;	
+			}
         }
     }
 }

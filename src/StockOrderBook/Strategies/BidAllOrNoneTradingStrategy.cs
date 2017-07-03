@@ -37,37 +37,49 @@ namespace StockOrderBook.Strategies
             Stack<Ask> matchedOrders = new Stack<Ask>();
 
             var enumerator = Asks.Orders.GetEnumerator();
+			// Accumulate Ask orders to fill bid order 
+			while (enumerator.MoveNext())
+			{
+				ask = enumerator.Current;
 
-            while(enumerator.MoveNext())
-            {
-                ask = enumerator.Current;
-                cumVolume += ask.Volume;
-                matchedOrders.Push(ask);
+				if (ask.AskPrice < order.BidPrice)
+				{					break;
+				}
 
-                if(cumVolume > order.Volume)
-                {
-                    if (ask.Trade == TradeType.AllOrNothing  )
-                    {
-                        break;
-                    }
+				cumVolume += ask.Volume;
+				matchedOrders.Push(ask);
 
-                    Ask newOrder = new Ask(ask.Ticker, cumVolume - order.Volume, ask.Trade, ask.Type, ask.AskPrice, ask.Validity );
-                    ask = new Ask(ask.Ticker, ask.Volume - newOrder.Volume, ask.Trade,  ask.Type, ask.AskPrice, ask.Validity);
-                    matchedOrders.Push(ask);
-                    // trade
-					CreateTrades(order.ID, trades, matchedOrders);
-					result = TradeResult.Traded;
-                    break;
-                }
+				if (cumVolume == order.Volume)
+				{
+					break;
+				}
 
-                if(cumVolume == order.Volume)
-                {
-                    // trades
-					CreateTrades(order.ID, trades, matchedOrders);
-					result = TradeResult.Traded;
-                    break;
-                }
-            }
+				if (cumVolume > order.Volume)
+				{
+					// if cum volume exceeds bid volume, try to divide last ask order to match volumes
+					if (ask.Trade == TradeType.AllowPartial)
+					{
+						matchedOrders.Pop();
+
+						ask.TradedVolume = order.Volume - (cumVolume - ask.Volume); 
+						matchedOrders.Push(ask);
+						cumVolume += ask.TradedVolume;
+					}
+					// trade not possible
+					else
+					{
+						break;
+					}
+				}
+			}
+			// If we got exact volumes to trade for bid order then execute the trade
+			if (cumVolume == order.Volume)
+			{
+				// trades
+				CreateTrades(order.ID, trades, matchedOrders);
+				Asks.Remove(matchedOrders.ToList());
+				result = TradeResult.Traded;
+			}
 
             return new TradeExecutionResult<Bid>(result, order, trades);
         }
