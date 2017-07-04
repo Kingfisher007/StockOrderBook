@@ -66,6 +66,11 @@ namespace StockOrderBook.Util
             return false;
         }
 
+		public void Remove(IList<T> orders)
+		{
+			Queue.RemoveWhere(order => orders.Contains(order));
+		}
+
         private void RaiseOrderChange(TopOrderChangedEventArgs args)
         {
             if(TopOrderChanged != null)
