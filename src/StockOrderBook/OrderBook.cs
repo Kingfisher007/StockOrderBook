@@ -28,8 +28,8 @@ namespace StockOrderBook
             TradeInProgress = false;
             lockObj = new Object();
 
-            Asks.TopOrderChanged += Asks_TopOrderChanged;
-            Bids.TopOrderChanged += Bids_TopOrderChanged;
+			Asks.TopOrderAdded += Asks_TopOrderAdded;
+			Bids.TopOrderAdded += Bids_TopOrderAdded;
         }
 
         public string Ticker
@@ -48,23 +48,51 @@ namespace StockOrderBook
             return Bids.Add(bid);
         }
 
-        private void Bids_TopOrderChanged(object sender, TopOrderChangedEventArgs eventArgs)
+		private void Bids_TopOrderAdded(OrderQueue<Bid> sender, TopOrderChangedEventArgs<Bid> eventArgs)
         {
 			if (!TradeInProgress)
 			{
-				TradeInProgress = true;
+				try
+				{
+					TradeInProgress = true;
+					BidTradingStrategy tradingStrategy = BidStrategies[eventArgs.Order.Trade];
+					if (tradingStrategy != null)
+					{
+						tradingStrategy.Execute(eventArgs.Order);
+					}
+				}
+				catch (Exception expn)
+				{
 
-				TradeInProgress = false;
+				}
+				finally
+				{
+					TradeInProgress = false;
+				}
 			}
         }
 
-        private void Asks_TopOrderChanged(object sender, TopOrderChangedEventArgs eventArgs)
+		private void Asks_TopOrderAdded(OrderQueue<Ask> sender, TopOrderChangedEventArgs<Ask> eventArgs)
         {
             if (!TradeInProgress)
 			{
-				TradeInProgress = true;
+				try
+				{
+					TradeInProgress = true;
+					AskTradingStrategy tradingstrategy = AskStrategies[eventArgs.Order.Trade];
+					if (tradingstrategy != null)
+					{
+						tradingstrategy.Execute(eventArgs.Order);
+					}
+				}
+				catch (Exception Expn)
+				{
 
-				TradeInProgress = false;	
+				}
+				finally
+				{
+					TradeInProgress = false;
+				}
 			}
         }
     }
