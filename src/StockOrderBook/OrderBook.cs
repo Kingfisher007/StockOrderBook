@@ -38,6 +38,43 @@ namespace StockOrderBook
             protected set;
         }
 
+		public float AskPrice
+		{
+			get
+			{
+				if (Asks.Top != null)
+				{
+					return Asks.Top.AskPrice;
+				}
+				else
+				{
+					return 0.0f;
+				}
+			}
+		}
+
+		public float BidPrice
+		{
+			get
+			{
+				if (Bids.Top != null)
+				{					return Bids.Top.BidPrice;
+				}
+				else
+				{
+					return 0.0f;	
+				}
+			}
+		}
+
+		public int Volume
+		{
+			get
+			{
+				return Asks.Orders.Sum(ao => ao.Volume) + Bids.Orders.Sum(bo => bo.Volume); 
+			}
+		}
+
         public bool Ask(Ask ask)
         {
             return Asks.Add(ask);
@@ -58,7 +95,7 @@ namespace StockOrderBook
 					BidTradingStrategy tradingStrategy = BidStrategies[eventArgs.Order.Trade];
 					if (tradingStrategy != null)
 					{
-						tradingStrategy.Execute(eventArgs.Order);
+						TradeExecutionResult<Bid> traderesult = tradingStrategy.Execute(eventArgs.Order);
 					}
 				}
 				catch (Exception expn)
@@ -82,7 +119,7 @@ namespace StockOrderBook
 					AskTradingStrategy tradingstrategy = AskStrategies[eventArgs.Order.Trade];
 					if (tradingstrategy != null)
 					{
-						tradingstrategy.Execute(eventArgs.Order);
+						TradeExecutionResult<Ask> traderesult = tradingstrategy.Execute(eventArgs.Order);
 					}
 				}
 				catch (Exception Expn)
