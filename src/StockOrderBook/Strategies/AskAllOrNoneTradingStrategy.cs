@@ -10,12 +10,12 @@ namespace StockOrderBook.Strategies
 {
     class AskAllOrNoneStrategy : AskTradingStrategy
     {
-        public AskAllOrNoneStrategy(OrderQueue<Bid> bid) :base(bid)
+        public AskAllOrNoneStrategy(OrderQueue<Bid> bid, TradeBook tradebook) :base(bid, tradebook)
         {
             
         }
 
-        public override TradeExecutionResult<Ask> Execute(Ask order)
+        public override TradeExecutionResult Execute(Ask order)
         {
             throw new NotImplementedException();
         }

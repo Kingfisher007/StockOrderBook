@@ -11,12 +11,12 @@ namespace StockOrderBook.Strategies
     class BidAllOrNoneTradingStrategy : BidTradingStrategy
     {
 
-        public BidAllOrNoneTradingStrategy(OrderQueue<Ask> asks) : base(asks)
+        public BidAllOrNoneTradingStrategy(OrderQueue<Ask> asks, TradeBook tradebook) : base(asks, tradebook)
         {
             
         }
 
-        public override TradeExecutionResult<Bid> Execute(Bid order)
+        public override TradeExecutionResult Execute(Bid order)
         {
             if(order == null)
             {
@@ -30,7 +30,6 @@ namespace StockOrderBook.Strategies
                 throw new ApplicationException("No orders to trade");
             }
 
-			List<Trade> trades = default(List<Trade>);
             int cumVolume = 0;
             Ask ask;
             TradeResult result = TradeResult.NotTraded;
@@ -64,6 +63,7 @@ namespace StockOrderBook.Strategies
 						ask.TradedVolume = order.Volume - (cumVolume - ask.Volume); 
 						matchedOrders.Push(ask);
 						cumVolume += ask.TradedVolume;
+						break;
 					}
 					// trade not possible
 					else
@@ -76,12 +76,12 @@ namespace StockOrderBook.Strategies
 			if (cumVolume == order.Volume)
 			{
 				// trades
-				trades = CreateTrades(order, matchedOrders);
+                AddTrades(CreateTrades(order, matchedOrders));
 				Asks.Remove(matchedOrders.ToList());
 				result = TradeResult.Traded;
 			}
 
-            return new TradeExecutionResult<Bid>(result, order, trades);
+			return new TradeExecutionResult(result, order.BidPrice, matchedOrders.Last().AskPrice);
         }
     }
 }

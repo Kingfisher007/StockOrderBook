@@ -10,12 +10,12 @@ namespace StockOrderBook.Strategies
 {
     class BidFillOrKillStrategy : BidTradingStrategy
     {
-        public BidFillOrKillStrategy(OrderQueue<Ask> ask) : base(ask)
+        public BidFillOrKillStrategy(OrderQueue<Ask> ask, TradeBook tradebook) : base(ask, tradebook)
         {
 
         }
 
-        public override TradeExecutionResult<Bid> Execute(Bid order)
+        public override TradeExecutionResult Execute(Bid order)
         {
             throw new NotImplementedException();
         }

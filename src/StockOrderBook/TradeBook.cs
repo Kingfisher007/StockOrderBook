@@ -7,18 +7,23 @@ using System.Threading.Tasks;
 
 namespace StockOrderBook
 {
-    public class TradeBook
-    {
-        List<Trade> Trades;
+	public class TradeBook
+	{
+		List<Trade> Trades;
 
-        public TradeBook()
-        {
-            Trades = new List<Trade>();
-        }
+		public TradeBook()
+		{
+			Trades = new List<Trade>();
+		}
 
-        public void Add(Trade trade)
-        {
-            Trades.Add(trade);
-        }
-    }
+		public void Add(Trade trade)
+		{
+			Trades.Add(trade);
+		}
+
+		public void AddRange(IList<Trade> trade)
+		{
+			Trades.AddRange(trade);
+		}
+	}
 }

@@ -7,17 +7,17 @@ using System.Threading.Tasks;
 
 namespace StockOrderBook.Entities
 {
-    public class TradeExecutionResult<T> where T : Order
+    public class TradeExecutionResult
     {
-        public IEnumerable<Trade> Trades { get; protected set; }
-        public T Order { get; protected set; }
+		public float BidPrice { get; protected set; }
+		public float AskPrice { get; protected set; }
         public TradeResult Result { get; protected set; }
 
-        public TradeExecutionResult(TradeResult result, T order, IEnumerable<Trade> trades)
+        public TradeExecutionResult(TradeResult result, float tradeBidPrice, float tradeAskPrice)
         {
             Result = result;
-            Order = order;
-            Trades = trades;
+			BidPrice = tradeBidPrice;
+			AskPrice = tradeAskPrice;
         }
     }
 }
