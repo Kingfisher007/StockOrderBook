@@ -75,6 +75,18 @@ namespace StockOrderBook
 			}
 		}
 
+		public float LastTradeAsk
+		{
+			get;
+			protected set;
+		}
+
+		public float LastTradeBid
+		{
+			get;
+			protected set;
+		}
+
         public bool Ask(Ask ask)
         {
             return Asks.Add(ask);
@@ -87,39 +99,29 @@ namespace StockOrderBook
 
 		private void Bids_TopOrderAdded(OrderQueue<Bid> sender, TopOrderChangedEventArgs<Bid> eventArgs)
         {
+			ExecuteTrade<Bid>(BidStrategies[eventArgs.Order.Trade], eventArgs.Order);
+        }
+
+		private void Asks_TopOrderAdded(OrderQueue<Ask> sender, TopOrderChangedEventArgs<Ask> eventArgs)
+		{
+			ExecuteTrade<Ask>(AskStrategies[eventArgs.Order.Trade], eventArgs.Order);
+        }
+
+		private void ExecuteTrade<T>(ITradingStrategy<T> tradingStrategy, T order) where T : Order
+		{
 			if (!TradeInProgress)
 			{
 				try
 				{
-					TradeInProgress = true;
-					BidTradingStrategy tradingStrategy = BidStrategies[eventArgs.Order.Trade];
 					if (tradingStrategy != null)
 					{
-						TradeExecutionResult<Bid> traderesult = tradingStrategy.Execute(eventArgs.Order);
-					}
-				}
-				catch (Exception expn)
-				{
-
-				}
-				finally
-				{
-					TradeInProgress = false;
-				}
-			}
-        }
-
-		private void Asks_TopOrderAdded(OrderQueue<Ask> sender, TopOrderChangedEventArgs<Ask> eventArgs)
-        {
-            if (!TradeInProgress)
-			{
-				try
-				{
-					TradeInProgress = true;
-					AskTradingStrategy tradingstrategy = AskStrategies[eventArgs.Order.Trade];
-					if (tradingstrategy != null)
-					{
-						TradeExecutionResult<Ask> traderesult = tradingstrategy.Execute(eventArgs.Order);
+						TradeInProgress = true;
+						TradeExecutionResult traderesult = tradingStrategy.Execute(order);
+						if (traderesult.Result == TradeResult.Traded)
+						{
+							LastTradeAsk = traderesult.AskPrice;
+							LastTradeBid = traderesult.BidPrice;
+						}
 					}
 				}
 				catch (Exception Expn)
@@ -131,6 +133,6 @@ namespace StockOrderBook
 					TradeInProgress = false;
 				}
 			}
-        }
+		}
     }
 }
