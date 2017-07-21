@@ -8,10 +8,10 @@ using System.Threading.Tasks;
 
 namespace StockOrderBook.Strategies
 {
-    class BidAllOrNoneTradingStrategy : BidTradingStrategy
+    class BidAONStrategy : BidTradingStrategy
     {
 
-        public BidAllOrNoneTradingStrategy(OrderQueue<Ask> asks, TradeBook tradebook) : base(asks, tradebook)
+        public BidAONStrategy(OrderQueue<Ask> asks, OrderQueue<Bid> bids, TradeBook tradebook) : base(asks, bids, tradebook)
         {
             
         }
@@ -42,7 +42,8 @@ namespace StockOrderBook.Strategies
 				ask = enumerator.Current;
 
 				if (ask.AskPrice > order.BidPrice)
-				{					break;
+				{
+					break;
 				}
 
 				cumVolume += ask.Volume;

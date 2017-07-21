@@ -11,6 +11,7 @@ namespace StockOrderBook.Entities
         AllOrNothing,
         FillOrKill,
         ImmidiateOrCancel,
-		AllowPartial
+		AllowPartial,
+        Market
     }
 }

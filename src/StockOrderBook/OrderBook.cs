@@ -13,23 +13,20 @@ namespace StockOrderBook
     {
         OrderQueue<Ask> Asks;
         OrderQueue<Bid> Bids;
-        Dictionary<TradeType, AskTradingStrategy> AskStrategies;
-        Dictionary<TradeType, BidTradingStrategy> BidStrategies;
+        ITradingStrategyProvider TradingStrategyProvider
         volatile bool TradeInProgress;
         Object lockObj;
 
-        public OrderBook(string ticker, Dictionary<TradeType, AskTradingStrategy> askStrategies, Dictionary<TradeType, BidTradingStrategy> bidStrategies)
+        public OrderBook(string ticker, ITradingStrategyProvider tradingStrategyProvider)
         {
             Ticker = ticker;
             Asks = new OrderQueue<Ask>(ticker, new AskOrderComparer());
             Bids = new OrderQueue<Bid>(ticker, new BidOrderComparer());
-            AskStrategies = askStrategies;
-            BidStrategies = bidStrategies;
+            TradingStrategyProvider = tradingStrategyProvider;
             TradeInProgress = false;
             lockObj = new Object();
 
-			Asks.TopOrderAdded += Asks_TopOrderAdded;
-			Bids.TopOrderAdded += Bids_TopOrderAdded;
+			TradingStrategyProvider.Initialise(Asks, Bids);
         }
 
         public string Ticker
@@ -58,7 +55,8 @@ namespace StockOrderBook
 			get
 			{
 				if (Bids.Top != null)
-				{					return Bids.Top.BidPrice;
+				{
+					return Bids.Top.BidPrice;
 				}
 				else
 				{
@@ -89,49 +87,47 @@ namespace StockOrderBook
 
         public bool Ask(Ask ask)
         {
-            return Asks.Add(ask);
+			try
+			{
+				ExecuteTrade(TradingStrategyProvider.GetAskStrategy(ask.Trade), ask);
+				return true;
+			}
+			catch(Exception expn)
+			{
+				return false;
+			}
         }
 
         public bool Bid(Bid bid)
         {
-            return Bids.Add(bid);
-        }
-
-		private void Bids_TopOrderAdded(OrderQueue<Bid> sender, TopOrderChangedEventArgs<Bid> eventArgs)
-        {
-			ExecuteTrade<Bid>(BidStrategies[eventArgs.Order.Trade], eventArgs.Order);
-        }
-
-		private void Asks_TopOrderAdded(OrderQueue<Ask> sender, TopOrderChangedEventArgs<Ask> eventArgs)
-		{
-			ExecuteTrade<Ask>(AskStrategies[eventArgs.Order.Trade], eventArgs.Order);
+			try
+			{
+				ExecuteTrade(TradingStrategyProvider.GetBidStrategy(bid.Trade), bid);
+				return true;
+			}
+			catch(Exception expn)
+			{
+				return false;
+			}
         }
 
 		private void ExecuteTrade<T>(ITradingStrategy<T> tradingStrategy, T order) where T : Order
 		{
-			if (!TradeInProgress)
+			try
 			{
-				try
+				if (tradingStrategy != null)
 				{
-					if (tradingStrategy != null)
+					TradeExecutionResult traderesult = tradingStrategy.Execute(order);
+					if (traderesult.Result == TradeResult.Traded)
 					{
-						TradeInProgress = true;
-						TradeExecutionResult traderesult = tradingStrategy.Execute(order);
-						if (traderesult.Result == TradeResult.Traded)
-						{
-							LastTradeAsk = traderesult.AskPrice;
-							LastTradeBid = traderesult.BidPrice;
-						}
+						LastTradeAsk = traderesult.AskPrice;
+						LastTradeBid = traderesult.BidPrice;
 					}
 				}
-				catch (Exception Expn)
-				{
+			}
+			catch (Exception Expn)
+			{
 
-				}
-				finally
-				{
-					TradeInProgress = false;
-				}
 			}
 		}
     }

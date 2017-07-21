@@ -52,13 +52,13 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Strategies\AskFillOrKillStrategy.cs" />
     <Compile Include="Strategies\AskTradingStrategy.cs" />
-    <Compile Include="Strategies\BidAllOrNoneTradingStrategy.cs" />
+    <Compile Include="Strategies\AllOrNoneTradingStrategy.cs" />
     <Compile Include="Strategies\BidFillOrKillStrategy.cs" />
     <Compile Include="Strategies\BidTradingStrategy.cs" />
     <Compile Include="Entities\TradeExecutionResult.cs" />
     <Compile Include="Entities\TradeResult.cs" />
     <Compile Include="TradeBook.cs" />
-    <Compile Include="Strategies\TradingStrategy.cs" />
+    <Compile Include="Strategies\ITradingStrategy.cs" />
     <Compile Include="Util\AskOrderComparer.cs" />
     <Compile Include="Util\BidOrderComparer.cs" />
     <Compile Include="Util\OrderQueue.cs" />

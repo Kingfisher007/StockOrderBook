@@ -1,18 +1,18 @@
-﻿using StockOrderBook.Entities;
-using StockOrderBook.Util;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using StockOrderBook.Entities;
+using StockOrderBook.Util;
 
 namespace StockOrderBook.Strategies
 {
-    class AskAllOrNoneStrategy : AskTradingStrategy
+    class AskFOKStrategy : AskTradingStrategy
     {
-        public AskAllOrNoneStrategy(OrderQueue<Bid> bid, TradeBook tradebook) :base(bid, tradebook)
+        public AskFOKStrategy(OrderQueue<Ask> asks, OrderQueue<Bid> bids, TradeBook tradebook) : base(asks, bids, tradebook)
         {
-            
+
         }
 
         public override TradeExecutionResult Execute(Ask order)

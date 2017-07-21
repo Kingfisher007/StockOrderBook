@@ -8,9 +8,9 @@ using StockOrderBook.Util;
 
 namespace StockOrderBook.Strategies
 {
-    class BidFillOrKillStrategy : BidTradingStrategy
+    class BidFOKStrategy : BidTradingStrategy
     {
-        public BidFillOrKillStrategy(OrderQueue<Ask> ask, TradeBook tradebook) : base(ask, tradebook)
+        public BidFOKStrategy(OrderQueue<Ask> asks, OrderQueue<Bid> bids, TradeBook tradebook) : base(ask, bids, tradebook)
         {
 
         }
