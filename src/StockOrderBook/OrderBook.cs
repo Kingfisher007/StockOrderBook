@@ -13,7 +13,7 @@ namespace StockOrderBook
     {
         OrderQueue<Ask> Asks;
         OrderQueue<Bid> Bids;
-        ITradingStrategyProvider TradingStrategyProvider
+        ITradingStrategyProvider TradingStrategyProvider;
         volatile bool TradeInProgress;
         Object lockObj;
 

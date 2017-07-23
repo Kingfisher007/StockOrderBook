@@ -1,4 +1,5 @@
 using StockOrderBook.Entities;
+using StockOrderBook.Util;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,21 +21,27 @@ namespace StockOrderBook.Strategies
             BidStrategies = new Dictionary<TradeType, BidTradingStrategy>();
         }
 
-        void Initialise(OrderQueue<Ask> asks, OrderQueue<Bid> bids)
+        public void Initialise(OrderQueue<Ask> asks, OrderQueue<Bid> bids)
         {
             // Asks
-            AskStrategies.Add();
+            AskStrategies.Add(TradeType.AllOrNothing, new AskAONStrategy(asks, bids, Tradebook));
+            AskStrategies.Add(TradeType.FillOrKill, new AskFOKStrategy(asks, bids, Tradebook));
+            AskStrategies.Add(TradeType.ImmidiateOrCancel, new AskIOCStrategy(asks, bids, Tradebook));
+            AskStrategies.Add(TradeType.Market, new AskMarketStrategy(asks, bids, Tradebook));
 
             // Bids
-            BidStrategies.Add();
+            BidStrategies.Add(TradeType.AllOrNothing, new BidAONStrategy(asks, bids, Tradebook));
+            BidStrategies.Add(TradeType.FillOrKill, new BidFOKStrategy(asks, bids, Tradebook));
+            BidStrategies.Add(TradeType.ImmidiateOrCancel, new BidIOCStrategy(asks, bids, Tradebook));
+            BidStrategies.Add(TradeType.Market, new BidMarketStrategy(asks, bids, Tradebook));
         }
 
-        AskTradingStrategy GetAskStrategy(TradeType type)
+        public AskTradingStrategy GetAskStrategy(TradeType type)
         {
             return AskStrategies[type];
         }
 
-        BidTradingStrategy GetBidStrategy(TradeType type)
+        public BidTradingStrategy GetBidStrategy(TradeType type)
         {
             return BidStrategies[type];
         }

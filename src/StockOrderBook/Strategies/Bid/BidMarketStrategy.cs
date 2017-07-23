@@ -1,16 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using StockOrderBook.Entities;
 using StockOrderBook.Util;
 
 namespace StockOrderBook.Strategies
 {
-    class BidFOKStrategy : BidTradingStrategy
+    internal class BidMarketStrategy : BidTradingStrategy
     {
-        public BidFOKStrategy(OrderQueue<Ask> asks, OrderQueue<Bid> bids, TradeBook tradebook) : base(asks, bids, tradebook)
+        public BidMarketStrategy(OrderQueue<Ask> asks, OrderQueue<Bid> bids, TradeBook tradebook) : base(asks, bids, tradebook)
         {
 
         }

@@ -10,7 +10,7 @@ namespace StockOrderBook.Strategies
 {
     class AskAONStrategy : AskTradingStrategy
     {
-        public AskAONStrategy(OrderQueue<Ask> asks, OrderQueue<Bid> bid, TradeBook tradebook) :base(asks, bids, tradebook)
+        public AskAONStrategy(OrderQueue<Ask> asks, OrderQueue<Bid> bids, TradeBook tradebook) :base(asks, bids, tradebook)
         {
             
         }
