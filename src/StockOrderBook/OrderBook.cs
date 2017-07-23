@@ -13,23 +13,20 @@ namespace StockOrderBook
     {
         OrderQueue<Ask> Asks;
         OrderQueue<Bid> Bids;
-        Dictionary<TradeType, AskTradingStrategy> AskStrategies;
-        Dictionary<TradeType, BidTradingStrategy> BidStrategies;
+        ITradingStrategyProvider TradingStrategyProvider
         volatile bool TradeInProgress;
         Object lockObj;
 
-        public OrderBook(string ticker, Dictionary<TradeType, AskTradingStrategy> askStrategies, Dictionary<TradeType, BidTradingStrategy> bidStrategies)
+        public OrderBook(string ticker, ITradingStrategyProvider tradingStrategyProvider)
         {
             Ticker = ticker;
             Asks = new OrderQueue<Ask>(ticker, new AskOrderComparer());
             Bids = new OrderQueue<Bid>(ticker, new BidOrderComparer());
-            AskStrategies = askStrategies;
-            BidStrategies = bidStrategies;
+            TradingStrategyProvider = tradingStrategyProvider;
             TradeInProgress = false;
             lockObj = new Object();
 
-            Asks.TopOrderChanged += Asks_TopOrderChanged;
-            Bids.TopOrderChanged += Bids_TopOrderChanged;
+			TradingStrategyProvider.Initialise(Asks, Bids);
         }
 
         public string Ticker
@@ -38,34 +35,100 @@ namespace StockOrderBook
             protected set;
         }
 
+		public float AskPrice
+		{
+			get
+			{
+				if (Asks.Top != null)
+				{
+					return Asks.Top.AskPrice;
+				}
+				else
+				{
+					return 0.0f;
+				}
+			}
+		}
+
+		public float BidPrice
+		{
+			get
+			{
+				if (Bids.Top != null)
+				{
+					return Bids.Top.BidPrice;
+				}
+				else
+				{
+					return 0.0f;	
+				}
+			}
+		}
+
+		public int Volume
+		{
+			get
+			{
+				return Asks.Orders.Sum(ao => ao.Volume) + Bids.Orders.Sum(bo => bo.Volume); 
+			}
+		}
+
+		public float LastTradeAsk
+		{
+			get;
+			protected set;
+		}
+
+		public float LastTradeBid
+		{
+			get;
+			protected set;
+		}
+
         public bool Ask(Ask ask)
         {
-            return Asks.Add(ask);
+			try
+			{
+				ExecuteTrade(TradingStrategyProvider.GetAskStrategy(ask.Trade), ask);
+				return true;
+			}
+			catch(Exception expn)
+			{
+				return false;
+			}
         }
 
         public bool Bid(Bid bid)
         {
-            return Bids.Add(bid);
-        }
-
-        private void Bids_TopOrderChanged(object sender, TopOrderChangedEventArgs eventArgs)
-        {
-			if (!TradeInProgress)
+			try
 			{
-				TradeInProgress = true;
-
-				TradeInProgress = false;
+				ExecuteTrade(TradingStrategyProvider.GetBidStrategy(bid.Trade), bid);
+				return true;
+			}
+			catch(Exception expn)
+			{
+				return false;
 			}
         }
 
-        private void Asks_TopOrderChanged(object sender, TopOrderChangedEventArgs eventArgs)
-        {
-            if (!TradeInProgress)
+		private void ExecuteTrade<T>(ITradingStrategy<T> tradingStrategy, T order) where T : Order
+		{
+			try
 			{
-				TradeInProgress = true;
-
-				TradeInProgress = false;	
+				if (tradingStrategy != null)
+				{
+					TradeExecutionResult traderesult = tradingStrategy.Execute(order);
+					if (traderesult.Result == TradeResult.Traded)
+					{
+						LastTradeAsk = traderesult.AskPrice;
+						LastTradeBid = traderesult.BidPrice;
+					}
+				}
 			}
-        }
+			catch (Exception Expn)
+			{
+
+			}
+		}
     }
 }

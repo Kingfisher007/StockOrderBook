@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using StockOrderBook.Entities;
 
 namespace StockOrderBook.Util
 {
-    public delegate void TopOrderChanged(object sender, TopOrderChangedEventArgs eventArgs);
+	public delegate void TopOrderChanged<T>(OrderQueue<T> sender, TopOrderChangedEventArgs<T> eventArgs) where T : Order;
 
     public enum ChangeReason
     {
@@ -14,13 +15,15 @@ namespace StockOrderBook.Util
         Removed
     }
 
-    public class TopOrderChangedEventArgs:EventArgs
+    public class TopOrderChangedEventArgs<T>:EventArgs
     {
         public ChangeReason Reason { get; protected set; }
+		public T Order { get; protected set; }
 
-        public TopOrderChangedEventArgs(ChangeReason reason)
+        public TopOrderChangedEventArgs(ChangeReason reason, T order)
         {
             Reason = reason;
+			Order = order;
         }
     }
 }

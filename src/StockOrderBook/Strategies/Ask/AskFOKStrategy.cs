@@ -8,14 +8,14 @@ using StockOrderBook.Util;
 
 namespace StockOrderBook.Strategies
 {
-    class AskFillOrKillStrategy : AskTradingStrategy
+    class AskFOKStrategy : AskTradingStrategy
     {
-        public AskFillOrKillStrategy(OrderQueue<Bid> bid) : base(bid)
+        public AskFOKStrategy(OrderQueue<Ask> asks, OrderQueue<Bid> bids, TradeBook tradebook) : base(asks, bids, tradebook)
         {
 
         }
 
-        public override TradeExecutionResult<Ask> Execute(Ask order)
+        public override TradeExecutionResult Execute(Ask order)
         {
             throw new NotImplementedException();
         }

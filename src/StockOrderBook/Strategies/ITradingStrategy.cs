@@ -9,6 +9,6 @@ namespace StockOrderBook.Strategies
 {
     public interface ITradingStrategy<T> where T : Order
     {
-        TradeExecutionResult<T> Execute(T order);
+        TradeExecutionResult Execute(T order);
     }
 }

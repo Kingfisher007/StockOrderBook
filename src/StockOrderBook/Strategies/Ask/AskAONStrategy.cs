@@ -8,14 +8,14 @@ using System.Threading.Tasks;
 
 namespace StockOrderBook.Strategies
 {
-    class AskAllOrNoneStrategy : AskTradingStrategy
+    class AskAONStrategy : AskTradingStrategy
     {
-        public AskAllOrNoneStrategy(OrderQueue<Bid> bid) :base(bid)
+        public AskAONStrategy(OrderQueue<Ask> asks, OrderQueue<Bid> bid, TradeBook tradebook) :base(asks, bids, tradebook)
         {
             
         }
 
-        public override TradeExecutionResult<Ask> Execute(Ask order)
+        public override TradeExecutionResult Execute(Ask order)
         {
             throw new NotImplementedException();
         }
