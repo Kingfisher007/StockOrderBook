@@ -65,7 +65,7 @@ namespace StockOrderBook.Strategies
 				result = TradeResult.Traded;
 			}
 
-			// remove order since its IOC
+			// remove order since its Market
 			Bids.Remove(order);
 
 			return new TradeExecutionResult(result, order.BidPrice, matchedOrders.Last().AskPrice);

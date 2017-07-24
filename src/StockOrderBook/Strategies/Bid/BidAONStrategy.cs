@@ -37,6 +37,7 @@ namespace StockOrderBook.Strategies
 
 				if (cumVolume == order.Volume)
 				{
+					result = TradeResult.Traded;
 					break;
 				}
 
