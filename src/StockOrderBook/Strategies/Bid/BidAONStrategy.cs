@@ -18,36 +18,22 @@ namespace StockOrderBook.Strategies
 
         public override TradeExecutionResult Execute(Bid order)
         {
-            if(order == null)
-            {
-				throw new ArgumentNullException(nameof(order));
-            }
-
-            if(Asks == null 
-               || (Asks != null && Asks.Orders == null)
-              )
-            {
-                throw new ApplicationException("No orders to trade");
-            }
+			ValidateParams(order);
 
             int cumVolume = 0;
-            Ask ask;
             TradeResult result = TradeResult.NotTraded;
             Stack<Ask> matchedOrders = new Stack<Ask>();
 
-            var enumerator = Asks.Orders.GetEnumerator();
 			// Accumulate Ask orders to fill bid order 
-			while (enumerator.MoveNext())
+			foreach(Ask ask in Asks.Orders)
 			{
-				ask = enumerator.Current;
-
 				if (ask.AskPrice > order.BidPrice)
 				{
 					break;
 				}
 
-				cumVolume += ask.Volume;
 				matchedOrders.Push(ask);
+				cumVolume += ask.Volume;
 
 				if (cumVolume == order.Volume)
 				{
@@ -56,14 +42,15 @@ namespace StockOrderBook.Strategies
 
 				if (cumVolume > order.Volume)
 				{
-					// if cum volume exceeds bid volume, try to divide last ask order to match volumes
-					if (ask.Trade == TradeType.AllowPartial)
-					{
-						matchedOrders.Pop();
+					// if cum volume exceeds bid volume, try to divide last ask order to match volumes					matchedOrders.Pop();
+					cumVolume -= ask.Volume;
 
-						ask.TradedVolume = order.Volume - (cumVolume - ask.Volume); 
+					if (ask.Trade != TradeType.AllOrNothing)
+					{
+						ask.TradedVolume = ask.Volume - (order.Volume - cumVolume);
 						matchedOrders.Push(ask);
 						cumVolume += ask.TradedVolume;
+						result = TradeResult.Traded;
 						break;
 					}
 					// trade not possible
@@ -73,13 +60,20 @@ namespace StockOrderBook.Strategies
 					}
 				}
 			}
-			// If we got exact volumes to trade for bid order then execute the trade
-			if (cumVolume == order.Volume)
+
+			// execute trade
+			if (result == TradeResult.Traded)
 			{
 				// trades
-                AddTrades(CreateTrades(order, matchedOrders));
+				AddTrades(CreateTrades(order, matchedOrders));
 				Asks.Remove(matchedOrders.ToList());
 				result = TradeResult.Traded;
+				// remove order since its traded
+				Bids.Remove(order);
+			}
+			else
+			{
+				Bids.Add(order);
 			}
 
 			return new TradeExecutionResult(result, order.BidPrice, matchedOrders.Last().AskPrice);

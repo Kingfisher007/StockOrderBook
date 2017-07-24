@@ -15,6 +15,23 @@ namespace StockOrderBook.Strategies
 
         }
 
+		protected bool ValidateParams(Ask order)
+		{
+			if(order == null)
+            {
+				throw new ArgumentNullException(nameof(order));
+            }
+
+			if(Bids == null 
+               || (Bids != null && Bids.Orders == null)
+              )
+            {
+                throw new ApplicationException("No orders to trade");
+            }
+
+			return true;
+		}
+
 		protected  List<Trade> CreateTrades(Ask order, IEnumerable<Bid> orders)
 		{
 			List<Trade> trades = new List<Trade>();
