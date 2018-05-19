@@ -10,9 +10,9 @@ namespace StockOrderBook.Strategies
 	{
 		protected OrderQueue<Ask> Asks;
 		protected OrderQueue<Bid> Bids;
-		TradeBook Tradebook;
+		FillBook Tradebook;
 
-		public BaseTradingStrategy(OrderQueue<Ask> asks, OrderQueue<Bid> bids,TradeBook tradebook)
+		public BaseTradingStrategy(OrderQueue<Ask> asks, OrderQueue<Bid> bids,FillBook tradebook)
 		{
 			Asks = asks;
 			Bids = bids;

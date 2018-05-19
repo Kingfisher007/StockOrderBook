@@ -11,7 +11,7 @@ namespace StockOrderBook.Strategies
     class BidAONStrategy : BidTradingStrategy
     {
 
-        public BidAONStrategy(OrderQueue<Ask> asks, OrderQueue<Bid> bids, TradeBook tradebook) : base(asks, bids, tradebook)
+        public BidAONStrategy(OrderQueue<Ask> asks, OrderQueue<Bid> bids, FillBook tradebook) : base(asks, bids, tradebook)
         {
             
         }
@@ -57,7 +57,7 @@ namespace StockOrderBook.Strategies
 				if (cumVolume > order.Volume)
 				{
 					// if cum volume exceeds bid volume, try to divide last ask order to match volumes
-					if (ask.Trade == TradeType.AllowPartial)
+					if (ask.Trade == TradeType.None)
 					{
 						matchedOrders.Pop();
 

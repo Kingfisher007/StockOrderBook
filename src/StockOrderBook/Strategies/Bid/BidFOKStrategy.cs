@@ -10,7 +10,7 @@ namespace StockOrderBook.Strategies
 {
     class BidFOKStrategy : BidTradingStrategy
     {
-        public BidFOKStrategy(OrderQueue<Ask> asks, OrderQueue<Bid> bids, TradeBook tradebook) : base(asks, bids, tradebook)
+        public BidFOKStrategy(OrderQueue<Ask> asks, OrderQueue<Bid> bids, FillBook tradebook) : base(asks, bids, tradebook)
         {
 
         }
