@@ -10,7 +10,7 @@ namespace StockOrderBook.Strategies
 {
     public abstract class AskTradingStrategy : BaseTradingStrategy<Ask>
     {
-		protected AskTradingStrategy(OrderQueue<Ask> asks, OrderQueue<Bid> bids, FillBook tradebook) : base(asks, bids, tradebook)
+		protected AskTradingStrategy(IOrderBook orderbook, IFillBook tradebook) : base(orderbook, tradebook)
         {
 
         }

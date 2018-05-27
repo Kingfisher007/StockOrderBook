@@ -8,22 +8,20 @@ namespace StockOrderBook.Strategies
 {
 	public abstract class BaseTradingStrategy<T> : ITradingStrategy<T> where T : Order
 	{
-		protected OrderQueue<Ask> Asks;
-		protected OrderQueue<Bid> Bids;
-		FillBook Tradebook;
+		protected IOrderBook Orderbook;
+		protected IFillBook Fillbook;
 
-		public BaseTradingStrategy(OrderQueue<Ask> asks, OrderQueue<Bid> bids,FillBook tradebook)
+		public BaseTradingStrategy(IOrderBook orderbook, IFillBook tradebook)
 		{
-			Asks = asks;
-			Bids = bids;
-			Tradebook = tradebook;
+            Orderbook = orderbook;
+            Fillbook = tradebook;
 		}
 
 		public abstract TradeExecutionResult Execute(T order);
 
 		protected void AddTrades(IList<Trade> trades)
 		{
-			Tradebook.AddRange(trades);
+			Fillbook.AddRange(trades);
 		}
 	}
 }

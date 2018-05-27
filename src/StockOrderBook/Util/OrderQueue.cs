@@ -66,9 +66,12 @@ namespace StockOrderBook.Util
 			return false;
 		}
 
-		public void Remove(IList<T> orders)
+		public void Remove(IEnumerator<T> orders)
 		{
-			Queue.RemoveWhere(order => orders.Contains(order));
+            while(orders.MoveNext())
+            {
+                Queue.Remove(orders.Current);
+            }
 		}
 
 		private void RaiseTopOrderAdded(TopOrderChangedEventArgs<T> args)
@@ -79,10 +82,9 @@ namespace StockOrderBook.Util
 			}
 		}
 
-
 		private void RaiseTopOrderRemoved(TopOrderChangedEventArgs<T> args)
 		{
-			if (TopOrderAdded != null)
+			if (TopOrderRemoved != null)
 			{
 				TopOrderRemoved(this, args);
 			}

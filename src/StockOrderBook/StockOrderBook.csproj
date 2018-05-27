@@ -47,6 +47,10 @@
     <Compile Include="Entities\Bid.cs" />
     <Compile Include="Entities\Order.cs" />
     <Compile Include="Entities\Trade.cs" />
+    <Compile Include="IFillBook.cs" />
+    <Compile Include="IOrderBook.cs" />
+    <Compile Include="MatchingEngine.cs" />
+    <Compile Include="Util\NewOrderEventArgs.cs" />
     <Compile Include="OrderBook.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Entities\TradeExecutionResult.cs" />
@@ -63,11 +67,12 @@
     <Compile Include="Strategies\Bid\BidTradingStrategy.cs" />
     <Compile Include="Strategies\ITradingStrategyProvider.cs" />
     <Compile Include="Strategies\TradingStrategyProvider.cs" />
-    <Compile Include="TradeBook.cs" />
+    <Compile Include="FillBook.cs" />
     <Compile Include="Strategies\ITradingStrategy.cs" />
     <Compile Include="Util\AskOrderComparer.cs" />
     <Compile Include="Util\BidOrderComparer.cs" />
     <Compile Include="Util\OrderQueue.cs" />
+    <Compile Include="Entities\OrderType.cs" />
     <Compile Include="Util\TopOrderChanged.cs" />
     <Compile Include="Strategies\BaseTradingStrategy.cs" />
   </ItemGroup>

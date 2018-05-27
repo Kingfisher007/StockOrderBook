@@ -1,8 +1,9 @@
 ﻿namespace StockOrderBook.Entities
 {
-    public enum TradeResult
+    public enum TradeStatus
     {
         Traded,
+        PartiallyTraded,
         NotTraded
     }
 }

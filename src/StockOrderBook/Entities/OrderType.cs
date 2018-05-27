@@ -1,6 +1,8 @@
-﻿namespace StockOrderBook.Util
+﻿namespace StockOrderBook.Entities
 {
-    public class OrderType
+    public enum OrderType
     {
+        Ask,
+        Bid
     }
 }

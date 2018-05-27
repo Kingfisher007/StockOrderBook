@@ -9,15 +9,15 @@ namespace StockOrderBook.Entities
 {
     public class TradeExecutionResult
     {
-		public float BidPrice { get; protected set; }
-		public float AskPrice { get; protected set; }
-        public TradeResult Result { get; protected set; }
+		public float Price { get; protected set; }
+		public int Volume { get; protected set; }
+        public TradeStatus Status { get; protected set; }
 
-        public TradeExecutionResult(TradeResult result, float tradeBidPrice, float tradeAskPrice)
+        public TradeExecutionResult(TradeStatus status, float price, int volume)
         {
-            Result = result;
-			BidPrice = tradeBidPrice;
-			AskPrice = tradeAskPrice;
+            Status = status;
+			Price = price;
+			Volume = volume;
         }
     }
 }

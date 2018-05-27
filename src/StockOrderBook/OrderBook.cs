@@ -9,24 +9,39 @@ using System.Threading.Tasks;
 
 namespace StockOrderBook
 {
-    class OrderBook
+    delegate void NewOrder<T>(IOrderBook orderBook, NewOrderEventArgs<T> newOrder) where T : Order;
+
+    class OrderBook : IOrderBook
     {
-        OrderQueue<Ask> Asks;
-        OrderQueue<Bid> Bids;
-        ITradingStrategyProvider TradingStrategyProvider;
-        volatile bool TradeInProgress;
+        OrderQueue<Ask> asks;
+        OrderQueue<Bid> bids;
         Object lockObj;
 
-        public OrderBook(string ticker, ITradingStrategyProvider tradingStrategyProvider)
+        public event NewOrder<Ask> NewAskOrder;
+        public event NewOrder<Bid> NewBidOrder;
+
+        public OrderBook(string ticker)
         {
             Ticker = ticker;
-            Asks = new OrderQueue<Ask>(ticker, new AskOrderComparer());
-            Bids = new OrderQueue<Bid>(ticker, new BidOrderComparer());
-            TradingStrategyProvider = tradingStrategyProvider;
-            TradeInProgress = false;
+            asks = new OrderQueue<Ask>(ticker, new AskOrderComparer());
+            bids = new OrderQueue<Bid>(ticker, new BidOrderComparer());
             lockObj = new Object();
+        }
 
-			TradingStrategyProvider.Initialise(Asks, Bids);
+        public IEnumerable<Ask> Asks
+        {
+            get
+            {
+                return Asks;
+            }
+        }
+
+        public IEnumerable<Bid> Bids
+        {
+            get
+            {
+                return Bids;
+            }
         }
 
         public string Ticker
@@ -35,100 +50,128 @@ namespace StockOrderBook
             protected set;
         }
 
-		public float AskPrice
-		{
-			get
-			{
-				if (Asks.Top != null)
-				{
-					return Asks.Top.AskPrice;
-				}
-				else
-				{
-					return 0.0f;
-				}
-			}
-		}
+        public float AskPrice
+        {
+            get
+            {
+                if (asks.Top != null)
+                {
+                    return asks.Top.AskPrice;
+                }
+                else
+                {
+                    return 0.0f;
+                }
+            }
+        }
 
-		public float BidPrice
-		{
-			get
-			{
-				if (Bids.Top != null)
-				{
-					return Bids.Top.BidPrice;
-				}
-				else
-				{
-					return 0.0f;	
-				}
-			}
-		}
+        public float BidPrice
+        {
+            get
+            {
+                if (bids.Top != null)
+                {
+                    return bids.Top.BidPrice;
+                }
+                else
+                {
+                    return 0.0f;
+                }
+            }
+        }
 
-		public int Volume
-		{
-			get
-			{
-				return Asks.Orders.Sum(ao => ao.Volume) + Bids.Orders.Sum(bo => bo.Volume); 
-			}
-		}
+        public int Volume
+        {
+            get
+            {
+                return asks.Orders.Sum(ao => ao.Volume) + bids.Orders.Sum(bo => bo.Volume);
+            }
+        }
 
-		public float LastTradeAsk
-		{
-			get;
-			protected set;
-		}
+        public float LastTradeAsk
+        {
+            get;
+            protected set;
+        }
 
-		public float LastTradeBid
-		{
-			get;
-			protected set;
-		}
+        public float LastTradeBid
+        {
+            get;
+            protected set;
+        }
 
         public bool Ask(Ask ask)
         {
-			try
-			{
-				ExecuteTrade(TradingStrategyProvider.GetAskStrategy(ask.Trade), ask);
-				return true;
-			}
-			catch(Exception expn)
-			{
-				return false;
-			}
+            try
+            {   
+                NewAskOrder?.Invoke(this, new NewOrderEventArgs<Ask>(Ticker, OrderType.Ask, ask));
+                return true;
+            }
+            catch (Exception expn)
+            {
+                return false;
+            }
         }
 
         public bool Bid(Bid bid)
         {
-			try
-			{
-				ExecuteTrade(TradingStrategyProvider.GetBidStrategy(bid.Trade), bid);
-				return true;
-			}
-			catch(Exception expn)
-			{
-				return false;
-			}
+            try
+            {
+                 NewBidOrder?.Invoke(this, new NewOrderEventArgs<Bid>(Ticker, OrderType.Bid, bid));
+                return true;
+            }
+            catch (Exception expn)
+            {
+                return false;
+            }
         }
 
-		private void ExecuteTrade<T>(ITradingStrategy<T> tradingStrategy, T order) where T : Order
-		{
-			try
-			{
-				if (tradingStrategy != null)
-				{
-					TradeExecutionResult traderesult = tradingStrategy.Execute(order);
-					if (traderesult.Result == TradeResult.Traded)
-					{
-						LastTradeAsk = traderesult.AskPrice;
-						LastTradeBid = traderesult.BidPrice;
-					}
-				}
-			}
-			catch (Exception Expn)
-			{
+        /////////////////////////////////////////////////////////////////////////////
+        // Explicit intefrace implementation for matching engine.
+        /////////////////////////////////////////////////////////////////////////////
 
-			}
-		}
+        void IOrderBook.Remove(Ask ask)
+        {
+            lock(lockObj)
+            {
+                asks.Remove(ask);
+            }
+        }
+
+        void IOrderBook.Remove(Bid bid)
+        {
+            lock(lockObj)
+            {
+                bids.Remove(bid);
+            }
+        }
+
+        void IOrderBook.Remove(IList<Ask> asks)
+        {
+            
+        }
+
+        void IOrderBook.Remove(IList<Bid> bids)
+        {
+
+        }
+
+        void IOrderBook.Add(Ask ask)
+        {
+            lock (lockObj)
+            {
+                asks.Add(ask);
+            }
+        }
+
+        void IOrderBook.Add(Bid bid)
+        {
+            lock (lockObj)
+            {
+                bids.Add(bid);
+            }
+        }
+
+        /////////////////////////////////////////////////////////////////////////////
     }
 }

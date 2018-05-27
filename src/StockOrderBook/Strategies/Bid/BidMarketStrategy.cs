@@ -6,7 +6,7 @@ namespace StockOrderBook.Strategies
 {
     internal class BidMarketStrategy : BidTradingStrategy
     {
-        public BidMarketStrategy(OrderQueue<Ask> asks, OrderQueue<Bid> bids, FillBook tradebook) : base(asks, bids, tradebook)
+        public BidMarketStrategy(IOrderBook orderbook, IFillBook tradebook) : base(orderbook, tradebook)
         {
 
         }

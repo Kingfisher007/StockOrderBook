@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace StockOrderBook
 {
-	public class FillBook
+	public class FillBook : IFillBook
 	{
 		List<Trade> Trades;
 

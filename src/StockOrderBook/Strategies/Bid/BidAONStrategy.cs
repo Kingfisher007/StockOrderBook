@@ -11,7 +11,7 @@ namespace StockOrderBook.Strategies
     class BidAONStrategy : BidTradingStrategy
     {
 
-        public BidAONStrategy(OrderQueue<Ask> asks, OrderQueue<Bid> bids, FillBook tradebook) : base(asks, bids, tradebook)
+        public BidAONStrategy(IOrderBook orderbook, IFillBook tradebook) : base(orderbook, tradebook)
         {
             
         }
@@ -23,19 +23,19 @@ namespace StockOrderBook.Strategies
 				throw new ArgumentNullException(nameof(order));
             }
 
-            if(Asks == null 
-               || (Asks != null && Asks.Orders == null)
-              )
+            IEnumerable<Ask> Asks = Orderbook.Asks;
+
+            if(Asks == null)
             {
                 throw new ApplicationException("No orders to trade");
             }
 
             int cumVolume = 0;
             Ask ask;
-            TradeResult result = TradeResult.NotTraded;
+            TradeStatus result = TradeStatus.NotTraded;
             Stack<Ask> matchedOrders = new Stack<Ask>();
 
-            var enumerator = Asks.Orders.GetEnumerator();
+            var enumerator = Asks.GetEnumerator();
 			// Accumulate Ask orders to fill bid order 
 			while (enumerator.MoveNext())
 			{
@@ -78,11 +78,11 @@ namespace StockOrderBook.Strategies
 			{
 				// trades
                 AddTrades(CreateTrades(order, matchedOrders));
-				Asks.Remove(matchedOrders.ToList());
-				result = TradeResult.Traded;
+				Orderbook.Remove(matchedOrders.ToList());
+				result = TradeStatus.Traded;
 			}
 
-			return new TradeExecutionResult(result, order.BidPrice, matchedOrders.Last().AskPrice);
+			return new TradeExecutionResult(result, order.BidPrice, order.Volume);
         }
     }
 }

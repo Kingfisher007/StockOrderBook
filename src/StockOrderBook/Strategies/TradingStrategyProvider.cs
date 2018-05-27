@@ -10,30 +10,33 @@ namespace StockOrderBook.Strategies
 {
     public class TradingStrategyProvider : ITradingStrategyProvider
     {
-        FillBook fillbook;
+        IFillBook fillbook;
+        IOrderBook orderbook;
         IDictionary<TradeType, AskTradingStrategy> AskStrategies;
         IDictionary<TradeType, BidTradingStrategy> BidStrategies;
 
-        public TradingStrategyProvider(FillBook fillbook)
+        public TradingStrategyProvider(IOrderBook orderbook, IFillBook fillbook)
         {
+            this.orderbook = orderbook;
             this.fillbook = fillbook;
             AskStrategies = new Dictionary<TradeType, AskTradingStrategy>();
             BidStrategies = new Dictionary<TradeType, BidTradingStrategy>();
+            Initialise();
         }
 
-        public void Initialise(OrderQueue<Ask> asks, OrderQueue<Bid> bids)
+        private void Initialise()
         {
             // Asks
-            AskStrategies.Add(TradeType.AllOrNothing, new AskAONStrategy(asks, bids, fillbook));
-            AskStrategies.Add(TradeType.FillOrKill, new AskFOKStrategy(asks, bids, fillbook));
-            AskStrategies.Add(TradeType.ImmidiateOrCancel, new AskIOCStrategy(asks, bids, fillbook));
-            AskStrategies.Add(TradeType.None, new AskMarketStrategy(asks, bids, fillbook));
+            AskStrategies.Add(TradeType.AllOrNothing, new AskAONStrategy(orderbook,fillbook));
+            AskStrategies.Add(TradeType.FillOrKill, new AskFOKStrategy(orderbook, fillbook));
+            AskStrategies.Add(TradeType.ImmidiateOrCancel, new AskIOCStrategy(orderbook, fillbook));
+            AskStrategies.Add(TradeType.None, new AskMarketStrategy(orderbook, fillbook));
 
             // Bids
-            BidStrategies.Add(TradeType.AllOrNothing, new BidAONStrategy(asks, bids, fillbook));
-            BidStrategies.Add(TradeType.FillOrKill, new BidFOKStrategy(asks, bids, fillbook));
-            BidStrategies.Add(TradeType.ImmidiateOrCancel, new BidIOCStrategy(asks, bids, fillbook));
-            BidStrategies.Add(TradeType.None, new BidMarketStrategy(asks, bids, fillbook));
+            BidStrategies.Add(TradeType.AllOrNothing, new BidAONStrategy(orderbook, fillbook));
+            BidStrategies.Add(TradeType.FillOrKill, new BidFOKStrategy(orderbook, fillbook));
+            BidStrategies.Add(TradeType.ImmidiateOrCancel, new BidIOCStrategy(orderbook, fillbook));
+            BidStrategies.Add(TradeType.None, new BidMarketStrategy(orderbook, fillbook));
         }
 
         public AskTradingStrategy GetAskStrategy(TradeType type)
