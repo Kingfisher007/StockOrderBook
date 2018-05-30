@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 
 namespace StockOrderBook.Strategies
 {
-    public interface ITradingStrategy<T> where T : Order
+    public interface ITradingStrategy 
     {
-        TradeExecutionResult Execute(T order);
+        TradeExecutionResult Execute(Order order);
     }
 }

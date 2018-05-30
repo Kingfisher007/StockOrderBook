@@ -10,7 +10,6 @@ namespace StockOrderBook.Strategies
 {
     public interface ITradingStrategyProvider
     {
-        AskTradingStrategy GetAskStrategy(TradeType type);
-        BidTradingStrategy GetBidStrategy(TradeType type);
+        ITradingStrategy GetTradingStrategy(OrderType orderType, TradeType type);
     }
 }

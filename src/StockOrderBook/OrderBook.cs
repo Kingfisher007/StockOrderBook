@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace StockOrderBook
 {
-    delegate void NewOrder<T>(IOrderBook orderBook, NewOrderEventArgs<T> newOrder) where T : Order;
+    
 
     class OrderBook : IOrderBook
     {
@@ -17,8 +17,7 @@ namespace StockOrderBook
         OrderQueue<Bid> bids;
         Object lockObj;
 
-        public event NewOrder<Ask> NewAskOrder;
-        public event NewOrder<Bid> NewBidOrder;
+        public event NewOrder NewOrderReceived;
 
         public OrderBook(string ticker)
         {
@@ -88,13 +87,13 @@ namespace StockOrderBook
             }
         }
 
-        public float LastTradeAsk
+        public Ask TopAsk
         {
             get;
             protected set;
         }
 
-        public float LastTradeBid
+        public Bid TopBid
         {
             get;
             protected set;
@@ -103,8 +102,8 @@ namespace StockOrderBook
         public bool Ask(Ask ask)
         {
             try
-            {   
-                NewAskOrder?.Invoke(this, new NewOrderEventArgs<Ask>(Ticker, OrderType.Ask, ask));
+            {
+                NewOrderReceived?.Invoke(this, new NewOrderEventArgs(Ticker, OrderType.Ask, ask));
                 return true;
             }
             catch (Exception expn)
@@ -117,7 +116,7 @@ namespace StockOrderBook
         {
             try
             {
-                 NewBidOrder?.Invoke(this, new NewOrderEventArgs<Bid>(Ticker, OrderType.Bid, bid));
+                NewOrderReceived?.Invoke(this, new NewOrderEventArgs(Ticker, OrderType.Bid, bid));
                 return true;
             }
             catch (Exception expn)

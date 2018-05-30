@@ -14,6 +14,7 @@ namespace StockOrderBook.Entities
                 : base (ticker, volume, type, otype, goodTill)
         {
             AskPrice = askPrice;
+            this.Type = OrderType.Ask;
         }
 
         public override bool Equals(object obj)

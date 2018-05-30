@@ -14,6 +14,7 @@ namespace StockOrderBook.Entities
                 : base(ticker, volume, type, otype, goodTill)
         {
             BidPrice = bidPrice;
+            this.Type = OrderType.Bid;
         }
 
         public override bool Equals(object obj)

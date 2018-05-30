@@ -6,7 +6,7 @@ using StockOrderBook.Util;
 
 namespace StockOrderBook.Strategies
 {
-	public abstract class BaseTradingStrategy<T> : ITradingStrategy<T> where T : Order
+	public abstract class BaseTradingStrategy : ITradingStrategy
 	{
 		protected IOrderBook Orderbook;
 		protected IFillBook Fillbook;
@@ -17,9 +17,9 @@ namespace StockOrderBook.Strategies
             Fillbook = tradebook;
 		}
 
-		public abstract TradeExecutionResult Execute(T order);
+		public abstract TradeExecutionResult Execute(Order order);
 
-		protected void AddTrades(IList<Trade> trades)
+        protected void AddTrades(IList<Trade> trades)
 		{
 			Fillbook.AddRange(trades);
 		}

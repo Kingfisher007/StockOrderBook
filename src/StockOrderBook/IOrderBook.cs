@@ -1,4 +1,5 @@
 ﻿using StockOrderBook.Entities;
+using StockOrderBook.Util;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,6 +8,8 @@ using System.Threading.Tasks;
 
 namespace StockOrderBook
 {
+    public delegate void NewOrder(IOrderBook orderBook, NewOrderEventArgs newOrder);
+
     public interface IOrderBook
     {
         IEnumerable<Ask> Asks
@@ -29,7 +32,17 @@ namespace StockOrderBook
             get;
         }
 
+        Ask TopAsk
+        {
+            get;
+        }
 
+        Bid TopBid
+        {
+            get;
+        }
+
+        event NewOrder NewOrderReceived;
 
         void Remove(Ask ask);
         void Remove(Bid bid);

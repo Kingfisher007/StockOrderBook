@@ -11,7 +11,7 @@ namespace StockOrderBook.Strategies
 
         }
 
-        public override TradeExecutionResult Execute(Bid order)
+        protected override TradeExecutionResult ExecuteBid(Bid order)
         {
             throw new NotImplementedException();
         }

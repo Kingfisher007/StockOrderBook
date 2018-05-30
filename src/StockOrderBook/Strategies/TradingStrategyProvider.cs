@@ -27,7 +27,7 @@ namespace StockOrderBook.Strategies
         private void Initialise()
         {
             // Asks
-            AskStrategies.Add(TradeType.AllOrNothing, new AskAONStrategy(orderbook,fillbook));
+            AskStrategies.Add(TradeType.AllOrNothing, new AskAONStrategy(orderbook, fillbook));
             AskStrategies.Add(TradeType.FillOrKill, new AskFOKStrategy(orderbook, fillbook));
             AskStrategies.Add(TradeType.ImmidiateOrCancel, new AskIOCStrategy(orderbook, fillbook));
             AskStrategies.Add(TradeType.None, new AskMarketStrategy(orderbook, fillbook));
@@ -39,14 +39,27 @@ namespace StockOrderBook.Strategies
             BidStrategies.Add(TradeType.None, new BidMarketStrategy(orderbook, fillbook));
         }
 
-        public AskTradingStrategy GetAskStrategy(TradeType type)
+        protected AskTradingStrategy GetAskStrategy(TradeType type)
         {
             return AskStrategies[type];
         }
 
-        public BidTradingStrategy GetBidStrategy(TradeType type)
+        protected BidTradingStrategy GetBidStrategy(TradeType type)
         {
             return BidStrategies[type];
+        }
+
+        public override ITradingStrategy GetTradingStrategy(OrderType orderType, TradeType type)
+        {
+            switch (orderType)
+            {
+                case OrderType.Ask:
+                    return GetAskStrategy(type);
+                case OrderType.Bid:
+                    return GetBidStrategy(type);
+                default:
+                    return null;
+            } 
         }
     }
 }

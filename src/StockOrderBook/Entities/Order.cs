@@ -10,8 +10,9 @@ namespace StockOrderBook.Entities
     {
         public Guid ID { get; private set; }
         public string Ticker { get; protected set; }
+        public OrderType Type { get; protected set; }
         public TradeType Trade { get; protected set; }
-        public PriceType Type { get; protected set; }
+        public PriceType PriceType { get; protected set; }
         public int Volume { get; protected set; }
 		public int TradedVolume { get; set; }
         public TimeInForce Validity { get; protected set; }
@@ -22,7 +23,7 @@ namespace StockOrderBook.Entities
             ID = Guid.NewGuid();
             Ticker = ticker;
             Trade = trade;
-            Type = type;
+            PriceType = type;
             Volume = volume;
 			TradedVolume = volume;
             Validity = goodTill;
@@ -39,7 +40,7 @@ namespace StockOrderBook.Entities
 
             return orderToCompare.Ticker.Equals(this.Ticker)
                 && orderToCompare.Trade.Equals(this.Trade)
-                && orderToCompare.Type.Equals(this.Type)
+                && orderToCompare.PriceType.Equals(this.PriceType)
                 && orderToCompare.Volume.Equals(this.Volume)
                 && orderToCompare.Validity.Equals(this.Validity)
                 && orderToCompare.Timestamp.Equals(this.Timestamp);

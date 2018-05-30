@@ -8,16 +8,16 @@ using StockOrderBook.Entities;
 namespace StockOrderBook.Util
 
 {
-    internal class NewOrderEventArgs<T> where T : Order
+    public class NewOrderEventArgs
     {
-        public NewOrderEventArgs(string ticker, OrderType type, T order)
+        public NewOrderEventArgs(string ticker, OrderType type, Order order)
         {
             Ticker = ticker;
             Type = type;
             Order = order;
         }
 
-        public T Order
+        public Order Order
         {
             get;
             private set;

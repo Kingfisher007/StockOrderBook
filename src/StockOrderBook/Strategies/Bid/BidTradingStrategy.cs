@@ -8,14 +8,25 @@ using System.Threading.Tasks;
 
 namespace StockOrderBook.Strategies
 {
-    public abstract class BidTradingStrategy : BaseTradingStrategy<Bid>
+    public abstract class BidTradingStrategy : BaseTradingStrategy
     {
 		protected BidTradingStrategy(IOrderBook orderbook, IFillBook tradebook) : base(orderbook, tradebook)
         {
 
         }
 
-		protected List<Trade> CreateTrades(Bid order, IEnumerable<Ask> orders)
+        public override TradeExecutionResult Execute(Order order)
+        {
+            if(!(order is Bid))
+            {
+                throw new ArgumentException();
+            }
+            return ExecuteBid(order as Bid);
+        }
+
+        protected abstract TradeExecutionResult ExecuteBid(Bid Order);
+
+        protected List<Trade> CreateTrades(Bid order, IEnumerable<Ask> orders)
 		{
 			List<Trade> trades = new List<Trade>();
 			foreach (Ask askOrder in orders)
