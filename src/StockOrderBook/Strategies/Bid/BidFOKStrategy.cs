@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using StockOrderBook.Entities;
+using EOrderBook.Entities;
 using StockOrderBook.Util;
 
 namespace StockOrderBook.Strategies
@@ -15,7 +15,7 @@ namespace StockOrderBook.Strategies
 
         }
 
-        public override TradeExecutionResult Execute(Bid order)
+        protected override TradeExecutionResult ExecuteBid(Bid order)
         {
             throw new NotImplementedException();
         }

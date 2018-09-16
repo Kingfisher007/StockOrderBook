@@ -1,4 +1,4 @@
-﻿using StockOrderBook.Entities;
+﻿using EOrderBook.Entities;
 using StockOrderBook.Util;
 using System;
 using System.Collections.Generic;
@@ -10,7 +10,7 @@ namespace StockOrderBook
 {
     public delegate void NewOrder(OrderManager orderBook, NewOrderEventArgs newOrder);
 
-    public class OrderManager
+    public class OrderManager : IOrderManager
     {
         public event NewOrder NewOrderReceived;
 

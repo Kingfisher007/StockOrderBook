@@ -1,4 +1,4 @@
-﻿using StockOrderBook.Entities;
+﻿using EOrderBook.Entities;
 using StockOrderBook.Util;
 using System;
 using System.Collections.Generic;

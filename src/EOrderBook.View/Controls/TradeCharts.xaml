@@ -1,0 +1,89 @@
+﻿<UserControl x:Class="EOrderBook.View.Controls.TradeCharts"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:liv="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
+             xmlns:local="clr-namespace:EOrderBook.View.Controls"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="100" />
+            <RowDefinition Height="7*" MinHeight="370" />
+            <RowDefinition Height="3*" MinHeight="180" />
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0" >
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="6*" />
+                <ColumnDefinition Width="4*"/>
+            </Grid.ColumnDefinitions>
+            <Label Grid.Column="0" HorizontalAlignment="Stretch" Background="{StaticResource HeaderBackgroundBrush}" Foreground="{StaticResource HeaderForegroundBrush}"
+               HorizontalContentAlignment="Left" VerticalContentAlignment="Center" FontSize="60" Padding="10,5,10,5" Content="{Binding Ticker}" />
+
+            <Label Grid.Column="1" HorizontalAlignment="Stretch" Background="{StaticResource HeaderBackgroundBrush}" Foreground="{StaticResource HeaderForegroundBrush}"
+                   HorizontalContentAlignment="Right" VerticalContentAlignment="Bottom" FontSize="40" Padding="10,5,10,5" Content="{Binding LastTradePrice}" ContentStringFormat="C2" Margin="0,3,0,-3" />
+
+        </Grid>
+        <!-- Price line -->
+        <liv:CartesianChart Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5,10,5,5" x:Name="TradePriceChart" >
+            <liv:CartesianChart.Series>
+                <liv:LineSeries Values="{Binding ChartValues}" 
+                                PointGeometry="{x:Null}" 
+                                LineSmoothness="1"
+                                StrokeThickness="2" 
+                                Stroke="{StaticResource HeaderForegroundBrush}"
+                                Fill="{StaticResource TransparentBrush}" />
+            </liv:CartesianChart.Series>
+            <liv:CartesianChart.AxisX>
+                <liv:Axis ShowLabels="True" 
+                          LabelFormatter="{Binding DateTimeFormatter}" 
+                          MaxValue="{Binding XAxisMax}" 
+                          MinValue="{Binding XAxisMin}"
+                          Unit="{Binding XAxisUnit}" >
+                    <liv:Axis.Separator>
+                        <liv:Separator Step="{Binding XAxisStep}" StrokeThickness="0" />
+                    </liv:Axis.Separator>
+                </liv:Axis>
+            </liv:CartesianChart.AxisX>
+            <liv:CartesianChart.AxisY>
+                <liv:Axis MaxValue="{Binding YAxisMax}" 
+                          MinValue="{Binding YAxisMin}"
+                          Unit="{Binding YAxisUnit}"
+                          ShowLabels="True" Margin="5,0,0,0">
+                    <liv:Axis.Separator>
+                        <liv:Separator Step="{Binding YAxisStep}" StrokeThickness="0"/>
+                    </liv:Axis.Separator>
+                </liv:Axis>
+            </liv:CartesianChart.AxisY>
+        </liv:CartesianChart>
+        
+        <!-- volume bar -->
+        <liv:CartesianChart  Grid.Row="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5,5,5,5" x:Name="TradeVolumeChart">
+            <liv:CartesianChart.Series>
+                <liv:ColumnSeries Values="{Binding ChartValues}" PointGeometry="{x:Null}"/>
+            </liv:CartesianChart.Series>
+            <liv:CartesianChart.AxisX>
+                <liv:Axis LabelFormatter="{Binding DateTimeFormatter}" 
+                          MaxValue="{Binding XAxisMax}" 
+                          MinValue="{Binding XAxisMin}"
+                          Unit="{Binding XAxisUnit}"
+                          ShowLabels="True" LabelsRotation="270" >
+                    <liv:Axis.Separator>
+                        <liv:Separator Step="{Binding XAxisStep}" StrokeThickness="0"/>
+                    </liv:Axis.Separator>
+                </liv:Axis>
+            </liv:CartesianChart.AxisX>
+            <liv:CartesianChart.AxisY>
+                <liv:Axis MaxValue="{Binding YAxisMax}" 
+                          MinValue="{Binding YAxisMin}"
+                          Unit="{Binding YAxisUnit}"
+                          ShowLabels="True" Margin="5,0,0,0" >
+                    <liv:Axis.Separator>
+                        <liv:Separator Step="{Binding YAxisStep}" StrokeThickness="0"/>
+                    </liv:Axis.Separator>
+                </liv:Axis>
+            </liv:CartesianChart.AxisY>
+        </liv:CartesianChart> 
+    </Grid>
+</UserControl>

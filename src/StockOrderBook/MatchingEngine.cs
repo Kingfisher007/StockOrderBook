@@ -1,4 +1,4 @@
-﻿using StockOrderBook.Entities;
+﻿using EOrderBook.Entities;
 using StockOrderBook.Strategies;
 using StockOrderBook.Util;
 using System;
@@ -10,21 +10,25 @@ using System.Threading.Tasks;
 
 namespace StockOrderBook
 {
-    class MatchingEngine
+    public class MatchingEngine
     {
         ITradingStrategyProvider TradingStrategyProvider;
         IOrderBook OrderBook;
+        IOrderExecutionLogbook OrderExecutionLogbook;
         Queue<Order> NewOrderQueue;
         AutoResetEvent signal;
         CancellationTokenSource tokensource;
+        bool IsRunning;
 
-        public MatchingEngine(IOrderBook orderBook, ITradingStrategyProvider tradingStrategyProvider)
+        public MatchingEngine(IOrderBook orderBook, IOrderExecutionLogbook orderExecutionLogbook, ITradingStrategyProvider tradingStrategyProvider)
         {
             OrderBook = orderBook;
+            OrderExecutionLogbook = orderExecutionLogbook;
             TradingStrategyProvider = tradingStrategyProvider;
             NewOrderQueue = new Queue<Order>();
             signal = new AutoResetEvent(false);
             tokensource = new CancellationTokenSource();
+            IsRunning = false;
         }
 
         public void OrderBook_NewOrderReceived(OrderManager orderBook, NewOrderEventArgs eventArgs)
@@ -42,32 +46,50 @@ namespace StockOrderBook
             tokensource.Cancel();
         }
 
-        private void MatchOrders(IOrderBook orderBook, CancellationToken token)
+        public bool Start()
+        {
+            if(!IsRunning)
+            {
+                try
+                {
+                    Task.Factory.StartNew(() => { this.MatchOrders(tokensource.Token); });
+                    IsRunning = true;
+                }
+                catch(Exception expn)
+                {
+                    //
+                }
+            }
+            return IsRunning;
+        }
+
+        private void MatchOrders(CancellationToken token)
         {
             TradeExecutionResult result = null;
             Order ord = null;
             ITradingStrategy tradingStrategy = null;
             bool IsNewOrder = false;
-
-            try
+            
+            while (true)
             {
-                while (true)
+                try
                 {
                     if (token.IsCancellationRequested)
                     {
                         // put all trades in order book and exit
                     }
-
+                    //
+                    OrderExecutionLog execLog = new OrderExecutionLog();
+                    execLog.State = OrderState.Cancelled;
                     //
                     ord = null;
-                    //
+                    // Get order to trade
                     if (NewOrderQueue.Count > 0)
                     {
                         ord = NewOrderQueue.Dequeue();
                         IsNewOrder = true;
-
                     }
-                    else if (OrderBook.TopAsk.AskPrice <= OrderBook.TopBid.BidPrice)
+                    else if (OrderBook.Asks.Count > 0 && OrderBook.Bids.Count > 0 && OrderBook.TopAsk.AskPrice <= OrderBook.TopBid.BidPrice)
                     {
                         if (OrderBook.TopAsk.Volume <= OrderBook.TopBid.Volume)
                         {
@@ -80,7 +102,7 @@ namespace StockOrderBook
 
                         IsNewOrder = false;
                     }
-
+                    // Execute trade for selected order
                     if (ord != null)
                     {
                         // Get strategy
@@ -101,11 +123,11 @@ namespace StockOrderBook
                             // Add in orderbook queue
                             if (ord.Type == OrderType.Ask)
                             {
-                                orderBook.Add(ord as Ask);
+                                OrderBook.Add(ord as Ask);
                             }
                             else
                             {
-                                orderBook.Add(ord as Bid);
+                                OrderBook.Add(ord as Bid);
                             }
                         }
 
@@ -115,24 +137,55 @@ namespace StockOrderBook
                             // remove order form orderbook queue
                             if (ord.Type == OrderType.Ask)
                             {
-                                orderBook.Remove(ord as Ask);
+                                OrderBook.Remove(ord as Ask);
                             }
                             else
                             {
-                                orderBook.Remove(ord as Bid);
+                                OrderBook.Remove(ord as Bid);
                             }
                         }
+
+                        //
+                        execLog.OrderID = ord.ID;
+                        execLog.Trade = ord.Trade;
+                        execLog.Type = ord.Type;
+                        execLog.Volume = ord.Volume;
+                        execLog.Price = ord.Price;
+                        execLog.Time = ord.Timestamp;
+                        execLog.State = GetOrderState(status);
+                        OrderExecutionLogbook.Log(execLog);
+
                     }
-                    else
+                    
+                    // 
+                    if(ord is null || (ord != null && result?.Status == TradeStatus.NotTraded))
                     {
+                        // reset
+                        ord = null;
+                        result = null;
                         // wait for new order signal
                         signal.WaitOne();
                     }
                 }
+                catch (Exception expn)
+                {
+                    // log
+                }
             }
-            catch(Exception expn)
+        }
+
+        private OrderState GetOrderState(TradeStatus status)
+        {
+            switch (status)
             {
-                // log
+                case TradeStatus.NotTraded:
+                    return OrderState.Cancelled;
+                case TradeStatus.PartiallyTraded:
+                    return OrderState.PratiallyTradedAndQueued;
+                case TradeStatus.Traded:
+                    return OrderState.Traded;
+                default:
+                    return OrderState.Queued;
             }
         }
     }

@@ -1,4 +1,4 @@
-﻿using StockOrderBook.Entities;
+﻿using EOrderBook.Entities;
 using StockOrderBook.Strategies;
 using StockOrderBook.Util;
 using System;
@@ -11,35 +11,35 @@ namespace StockOrderBook
 {
     
 
-    class OrderBook : IOrderBook
+    public class OrderBook : IOrderBook
     {
-        OrderQueue<Ask> asks;
-        OrderQueue<Bid> bids;
+        OrderQueue<Ask> _asks;
+        OrderQueue<Bid> _bids;
         Object lockObj;
 
-        public event NewOrder NewOrderReceived;
+        
 
         public OrderBook(string ticker)
         {
             Ticker = ticker;
-            asks = new OrderQueue<Ask>(ticker, new AskOrderComparer());
-            bids = new OrderQueue<Bid>(ticker, new BidOrderComparer());
+            _asks = new OrderQueue<Ask>(ticker, new AskOrderComparer());
+            _bids = new OrderQueue<Bid>(ticker, new BidOrderComparer());
             lockObj = new Object();
         }
 
-        public IEnumerable<Ask> Asks
+        public OrderQueue<Ask> Asks
         {
             get
             {
-                return Asks;
+                return _asks;
             }
         }
 
-        public IEnumerable<Bid> Bids
+        public OrderQueue<Bid> Bids
         {
             get
             {
-                return Bids;
+                return _bids;
             }
         }
 
@@ -53,9 +53,9 @@ namespace StockOrderBook
         {
             get
             {
-                if (asks.Top != null)
+                if (_asks.Top != null)
                 {
-                    return asks.Top.AskPrice;
+                    return _asks.Top.AskPrice;
                 }
                 else
                 {
@@ -68,9 +68,9 @@ namespace StockOrderBook
         {
             get
             {
-                if (bids.Top != null)
+                if (_bids.Top != null)
                 {
-                    return bids.Top.BidPrice;
+                    return _bids.Top.BidPrice;
                 }
                 else
                 {
@@ -83,45 +83,23 @@ namespace StockOrderBook
         {
             get
             {
-                return asks.Orders.Sum(ao => ao.Volume) + bids.Orders.Sum(bo => bo.Volume);
+                return _asks.Queue.Sum(ao => ao.Volume) + _bids.Queue.Sum(bo => bo.Volume);
             }
         }
 
         public Ask TopAsk
         {
-            get;
-            protected set;
+            get
+            {
+                return _asks.Top;
+            }
         }
 
         public Bid TopBid
         {
-            get;
-            protected set;
-        }
-
-        public bool Ask(Ask ask)
-        {
-            try
+            get
             {
-                NewOrderReceived?.Invoke(this, new NewOrderEventArgs(Ticker, OrderType.Ask, ask));
-                return true;
-            }
-            catch (Exception expn)
-            {
-                return false;
-            }
-        }
-
-        public bool Bid(Bid bid)
-        {
-            try
-            {
-                NewOrderReceived?.Invoke(this, new NewOrderEventArgs(Ticker, OrderType.Bid, bid));
-                return true;
-            }
-            catch (Exception expn)
-            {
-                return false;
+                return _bids.Top;
             }
         }
 
@@ -133,7 +111,7 @@ namespace StockOrderBook
         {
             lock(lockObj)
             {
-                asks.Remove(ask);
+                _asks.Remove(ask);
             }
         }
 
@@ -141,25 +119,31 @@ namespace StockOrderBook
         {
             lock(lockObj)
             {
-                bids.Remove(bid);
+                _bids.Remove(bid);
             }
         }
 
         void IOrderBook.Remove(IList<Ask> asks)
         {
-            
+            lock(lockObj)
+            {
+                this._asks.Remove(asks);
+            }
         }
 
         void IOrderBook.Remove(IList<Bid> bids)
         {
-
+            lock(lockObj)
+            {
+                this._bids.Remove(bids);
+            }
         }
 
         void IOrderBook.Add(Ask ask)
         {
             lock (lockObj)
             {
-                asks.Add(ask);
+                _asks.Add(ask);
             }
         }
 
@@ -167,7 +151,7 @@ namespace StockOrderBook
         {
             lock (lockObj)
             {
-                bids.Add(bid);
+                _bids.Add(bid);
             }
         }
 

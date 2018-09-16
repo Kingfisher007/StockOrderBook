@@ -1,95 +1,122 @@
-﻿using StockOrderBook.Entities;
+﻿using EOrderBook.Entities;
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace StockOrderBook.Util
 {
-	public class OrderQueue<T> where T : Order
+	public class OrderQueue<T> : INotifyCollectionChanged  where T : Order
 	{
-		protected SortedSet<T> Queue;
+		protected SortedSet<T> queue;
 
 		public string Ticker { get; protected set; }
-		public T Top { get { return Queue.Max; } }
+		public T Top { get { return queue.Max; } }
 		public IComparer<T> Comparer { get; protected set; }
-		public IEnumerable<T> Orders { get { return Queue.AsEnumerable(); } }
-		public event TopOrderChanged<T> TopOrderAdded;
+        public IEnumerator<T> Orders { get { return queue.GetEnumerator(); } }
+        public event TopOrderChanged<T> TopOrderAdded;
 		public event TopOrderChanged<T> TopOrderRemoved;
+        public event NotifyCollectionChangedEventHandler CollectionChanged;
 
-		public OrderQueue(string ticker, IComparer<T> comparer)
+        public OrderQueue(string ticker, IComparer<T> comparer)
 		{
 			Ticker = ticker;
 			Comparer = comparer;
-			Queue = new SortedSet<T>(comparer);
+			queue = new SortedSet<T>(comparer);
 		}
 
-		public bool Add(T order)
+        public SortedSet<T> Queue
+        {
+            get
+            {
+                return queue;
+            }
+        }
+
+        public int Count
+        {
+            get
+            {
+                return queue.Count;
+            }
+        }
+
+        protected void RaiseCollectionChanged(NotifyCollectionChangedAction action, IList orders)
+        {
+            NotifyCollectionChangedEventArgs args = new NotifyCollectionChangedEventArgs( action, orders);
+            CollectionChanged?.Invoke(this, args);
+        }
+
+		public void Add(T order)
 		{
 			if (!order.Ticker.Equals(Ticker))
 			{
 				throw new Exception("Invalid order.");
 			}
 
-			if (Queue.Add(order))
+			if (queue.Add(order))
 			{
 				// make sure order is same/unique
-				if (Queue.Max.ID.Equals(order.ID))
+				if (queue.Max.ID.Equals(order.ID))
 				{
-					TopOrderChangedEventArgs<T> Args = new TopOrderChangedEventArgs<T>(ChangeReason.Added, order);
-					RaiseTopOrderAdded(Args);
+					RaiseTopOrderAdded(order);
 				}
-
-				return true;
+                IList list = new ArrayList();
+                list.Add(order);
+                RaiseCollectionChanged(NotifyCollectionChangedAction.Add, list);
 			}
-			return false;
+
 		}
 
-		public bool Remove(T order)
+		public void Remove(T order)
 		{
 			bool isTop = false;
 			// Reference comparison.
 			// make sure order is same/unique
-			if (Queue.Max == order)
+			if (queue.Max == order)
 			{
 				isTop = true;
 			}
 
-			if (Queue.Remove(order) && isTop)
+			if (queue.Remove(order) && isTop)
 			{
-				TopOrderChangedEventArgs<T> Args = new TopOrderChangedEventArgs<T>(ChangeReason.Removed, order);
-				RaiseTopOrderRemoved(Args);
-				return true;
+				RaiseTopOrderRemoved(order);
+                IList list = new ArrayList();
+                list.Add(order);
+                RaiseCollectionChanged(NotifyCollectionChangedAction.Remove, list);
 			}
-
-			return false;
 		}
 
-		public void Remove(IEnumerator<T> orders)
+		public void Remove(IList<T> orders)
 		{
-            while(orders.MoveNext())
+            foreach(T order in orders)
             {
-                Queue.Remove(orders.Current);
+                queue.Remove(order);
             }
-		}
+            IList list = new ArrayList(orders.ToArray());
+            RaiseCollectionChanged(NotifyCollectionChangedAction.Remove, list);
+        }
 
-		private void RaiseTopOrderAdded(TopOrderChangedEventArgs<T> args)
+		private void RaiseTopOrderAdded(T order)
 		{
 			if (TopOrderAdded != null)
 			{
-				TopOrderAdded(this, args);
+                TopOrderChangedEventArgs<T> args = new TopOrderChangedEventArgs<T>(ChangeReason.Added, order);
+                TopOrderAdded(this, args);
 			}
 		}
 
-		private void RaiseTopOrderRemoved(TopOrderChangedEventArgs<T> args)
+		private void RaiseTopOrderRemoved(T order)
 		{
 			if (TopOrderRemoved != null)
 			{
-				TopOrderRemoved(this, args);
+                TopOrderChangedEventArgs<T> args = new TopOrderChangedEventArgs<T>(ChangeReason.Removed, order);
+                TopOrderRemoved(this, args);
 			}
 		}
-
 	}
 }
 

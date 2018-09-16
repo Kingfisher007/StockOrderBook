@@ -1,5 +1,5 @@
 ﻿using System;
-using StockOrderBook.Entities;
+using EOrderBook.Entities;
 using StockOrderBook.Util;
 
 namespace StockOrderBook.Strategies
@@ -10,7 +10,7 @@ namespace StockOrderBook.Strategies
         {
         }
 
-        public override TradeExecutionResult Execute(Ask order)
+        protected override TradeExecutionResult ExecuteAsk(Ask order)
         {
             throw new NotImplementedException();
         }

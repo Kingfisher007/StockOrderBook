@@ -1,4 +1,4 @@
-﻿using StockOrderBook.Entities;
+﻿using EOrderBook.Entities;
 using StockOrderBook.Util;
 using System;
 using System.Collections.Generic;
@@ -8,16 +8,14 @@ using System.Threading.Tasks;
 
 namespace StockOrderBook
 {
-    public delegate void NewOrder(IOrderBook orderBook, NewOrderEventArgs newOrder);
-
     public interface IOrderBook
     {
-        IEnumerable<Ask> Asks
+        OrderQueue<Ask> Asks
         {
             get;
         }
 
-        IEnumerable<Bid> Bids
+        OrderQueue<Bid> Bids
         {
             get;
         }
@@ -41,8 +39,6 @@ namespace StockOrderBook
         {
             get;
         }
-
-        event NewOrder NewOrderReceived;
 
         void Remove(Ask ask);
         void Remove(Bid bid);

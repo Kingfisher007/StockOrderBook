@@ -1,0 +1,62 @@
+﻿<UserControl x:Class="EOrderBook.View.Controls.LogBook"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:EOrderBook.View.Controls"
+             xmlns:con="clr-namespace:EOrderBook.View.Convertors"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300">
+    <UserControl.Resources>
+        <con:EnumToStringConvertor x:Key="EnumToStringConvertor" />
+        <con:LogStateToImageConvertor x:Key="ImageConvertor" />
+        <con:PriceTypeToStringMultiConvertor x:Key="PriceConvertor" />
+        <con:TimeFormatConvertor x:Key="DateConvertor" />
+    </UserControl.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="45" />
+            <RowDefinition Height="5*" />
+        </Grid.RowDefinitions>
+        <Label Grid.Row="0" Background="{StaticResource HeaderBackgroundBrush}" Foreground="{StaticResource HeaderForegroundBrush}" FontSize="{StaticResource HeaderFontWeight}" >
+            New Order Entry Logs
+        </Label>
+        <DataGrid Grid.Row="1" 
+                  MaxHeight="300"
+                  HorizontalAlignment="Stretch" 
+                  HorizontalContentAlignment="Center" 
+                  RowHeaderWidth="0" 
+                  VerticalAlignment="Stretch"  
+                  IsReadOnly="True" 
+                  AutoGenerateColumns="False" 
+                  ItemsSource="{Binding Logs}" 
+                  SelectionMode="Single" 
+                  SelectionUnit="FullRow" 
+                  CanUserSortColumns="False"
+                  ScrollViewer.CanContentScroll="True"
+                  ScrollViewer.VerticalScrollBarVisibility="Visible">
+            <DataGrid.Columns>
+                <DataGridTemplateColumn Width="70" IsReadOnly="True">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Image Height="30" Width="30" Source="{Binding State, Converter={StaticResource ImageConvertor}}" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTextColumn Header="Type" MinWidth="100" Binding="{Binding Type, Converter={StaticResource EnumToStringConvertor}}" IsReadOnly="True" />
+                <DataGridTextColumn Header="Price" MinWidth="200" IsReadOnly="True" >
+                    <DataGridTextColumn.Binding>
+                        <MultiBinding Converter="{StaticResource PriceConvertor}">
+                            <Binding Path="Pricetype" />
+                            <Binding Path="Price" />
+                        </MultiBinding>
+                    </DataGridTextColumn.Binding>
+                </DataGridTextColumn>
+                <DataGridTextColumn Header="Volume" MinWidth="150" Binding="{Binding Volume}" IsReadOnly="True" />
+                <DataGridTextColumn Header="Option" MinWidth="200" Binding="{Binding Trade, Converter={StaticResource EnumToStringConvertor}}" IsReadOnly="True" />
+                <DataGridTextColumn Header="Time" Width="*"  Binding="{Binding Time, Converter={StaticResource DateConvertor}}" IsReadOnly="True"/>
+            </DataGrid.Columns>
+        </DataGrid>
+
+    </Grid>
+</UserControl>

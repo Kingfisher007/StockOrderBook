@@ -1,0 +1,92 @@
+﻿<Window x:Class="EOrderBook.View.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:EOrderBook.View.Controls"
+        mc:Ignorable="d"
+        Title="EOrder Book" Height="350" Width="525">
+
+    <Border BorderThickness="1" BorderBrush="{StaticResource ComboBoxHoverBorderBrush}">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="4*" />
+                <ColumnDefinition Width="1*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.Background>
+                <SolidColorBrush Color="{DynamicResource BaseM2Color}" />
+            </Grid.Background>
+
+            <!-- Left panel -->
+            <Border BorderThickness="1" BorderBrush="{StaticResource ComboBoxHoverBorderBrush}">
+                <Grid Grid.Column="0" >
+                    <!-- OrderBook -->
+                    <local:OrderBook x:Name="OrderBook" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+                </Grid>
+            </Border>
+            <!-- Middle panel -->
+            
+                <Grid Grid.Column="1">
+                <Border BorderThickness="1" BorderBrush="{StaticResource ComboBoxHoverBorderBrush}">
+                    <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="4*"/>
+                        <RowDefinition Height="2*"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- chart and FillBook -->
+                    <Grid Grid.Row="0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="3*"/>
+                            <ColumnDefinition Width="2*"/>
+                        </Grid.ColumnDefinitions>
+                        <!-- chart -->
+                        <StackPanel Grid.Column="0">
+                            <local:TradeCharts x:Name="TradeChatrsView"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+                        </StackPanel>
+                        <!-- Fillbook -->
+                        <Border Grid.Column="1" BorderThickness="1" BorderBrush="{StaticResource ComboBoxHoverBorderBrush}">
+                             <local:FillBook x:Name="FillBookView" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" />
+                        </Border>
+                        
+                        </Grid>
+
+                    <!-- Order execution log -->
+                    <StackPanel Grid.Row="1">
+                            <Border BorderThickness="1" BorderBrush="{StaticResource ComboBoxHoverBorderBrush}">
+                                <local:LogBook x:Name="LogBook" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+                            </Border>
+                    </StackPanel>
+
+                </Grid>
+                </Border>
+            </Grid>
+            
+            <!-- Right panel -->
+            
+                <Grid Grid.Column="2" >
+                <Border BorderThickness="1" BorderBrush="{StaticResource ComboBoxHoverBorderBrush}">
+                    <StackPanel Orientation="Vertical" Margin="2,2,2,2" >
+                        <StackPanel Name="TabParent" Height="550" Orientation="Vertical">
+                            <Label Foreground="{StaticResource HeaderForegroundBrush}" Background="{StaticResource HeaderBackgroundBrush}" FontSize="{StaticResource HeaderFontWeight}" >Order Entry</Label>
+                            <TabControl Margin="0,0,0,0" TabStripPlacement="Top"  Padding="0,0,0,0" Height="{Binding ElementName=TabParent, Path=Height}"  >
+                                <TabItem Name="NewOrder" Header="Manual">
+                                    <local:NewOrder x:Name="NewOrderView" Margin="2,2,2,2" ></local:NewOrder>
+                                </TabItem>
+                                <TabItem Name="simulate" Header="Simulation">
+                                    <local:Simulation x:Name="SimulationView" Margin="2,2,2,2" ></local:Simulation>
+                                </TabItem>
+                            </TabControl>
+                        </StackPanel>
+                        <StackPanel Name="LogoPanel" Margin="10,130,10,0" Orientation="Vertical">
+                            <Image Height="200" Width="200" Margin="10,10,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" Source="/Resources/logo.png" />
+                            <Label Foreground="{StaticResource HeaderForegroundBrush}" FontSize="25" VerticalAlignment="Top" HorizontalAlignment="Center" >Stock Exchange Simulator</Label>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+                </Grid>
+            
+        </Grid>
+    </Border>
+</Window>

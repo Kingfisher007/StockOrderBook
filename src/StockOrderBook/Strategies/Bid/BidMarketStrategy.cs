@@ -1,5 +1,5 @@
 ﻿using System;
-using StockOrderBook.Entities;
+using EOrderBook.Entities;
 using StockOrderBook.Util;
 
 namespace StockOrderBook.Strategies

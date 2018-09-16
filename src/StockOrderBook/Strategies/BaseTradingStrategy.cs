@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using StockOrderBook;
-using StockOrderBook.Entities;
+using EOrderBook.Entities;
 using StockOrderBook.Util;
 
 namespace StockOrderBook.Strategies

@@ -1,4 +1,4 @@
-﻿using StockOrderBook.Entities;
+﻿using EOrderBook.Entities;
 using StockOrderBook.Util;
 using System;
 using System.Collections.Generic;
@@ -16,72 +16,74 @@ namespace StockOrderBook.Strategies
             
         }
 
-        public override TradeExecutionResult Execute(Bid order)
+        protected override TradeExecutionResult ExecuteBid(Bid order)
         {
             if(order == null)
             {
 				throw new ArgumentNullException(nameof(order));
             }
 
-            IEnumerable<Ask> Asks = Orderbook.Asks;
-
-            if(Asks == null)
-            {
-                throw new ApplicationException("No orders to trade");
-            }
-
-            int cumVolume = 0;
-            Ask ask;
             TradeStatus result = TradeStatus.NotTraded;
-            Stack<Ask> matchedOrders = new Stack<Ask>();
 
-            var enumerator = Asks.GetEnumerator();
-			// Accumulate Ask orders to fill bid order 
-			while (enumerator.MoveNext())
-			{
-				ask = enumerator.Current;
+            if (Orderbook.Asks.Count > 0)
+            {
+                int cumVolume = 0;
+                //Ask ask;
+                Stack<Ask> matchedOrders = new Stack<Ask>();
 
-				if (ask.AskPrice > order.BidPrice)
-				{
-					break;
-				}
+                //var enumerator = Orderbook.Asks.Orders;
+                //// Accumulate Ask orders to fill bid order 
+                //while (enumerator.MoveNext())
+                //{
+                //    ask = enumerator.Current;
+                foreach(Ask ask in Orderbook.Asks.Queue)
+                { 
+                    if (ask.AskPrice > order.BidPrice)
+                    {
+                        break;
+                    }
 
-				cumVolume += ask.Volume;
-				matchedOrders.Push(ask);
+                    if (TradeType.AllOrNothing == ask.Trade && ask.Volume > order.Volume)
+                    {
+                        continue;
+                    }
 
-				if (cumVolume == order.Volume)
-				{
-					break;
-				}
+                    cumVolume += ask.Volume;
+                    matchedOrders.Push(ask);
 
-				if (cumVolume > order.Volume)
-				{
-					// if cum volume exceeds bid volume, try to divide last ask order to match volumes
-					if (ask.Trade == TradeType.None)
-					{
-						matchedOrders.Pop();
+                    if (cumVolume == order.Volume)
+                    {
+                        break;
+                    }
 
-						ask.TradedVolume = order.Volume - (cumVolume - ask.Volume); 
-						matchedOrders.Push(ask);
-						cumVolume += ask.TradedVolume;
-						break;
-					}
-					// trade not possible
-					else
-					{
-						break;
-					}
-				}
-			}
-			// If we got exact volumes to trade for bid order then execute the trade
-			if (cumVolume == order.Volume)
-			{
-				// trades
-                AddTrades(CreateTrades(order, matchedOrders));
-				Orderbook.Remove(matchedOrders.ToList());
-				result = TradeStatus.Traded;
-			}
+                    if (cumVolume > order.Volume)
+                    {
+                        // if cum volume exceeds bid volume, try to divide last ask order to match volumes
+                        if (ask.Trade == TradeType.None)
+                        {
+                            matchedOrders.Pop();
 
+                            ask.TradedVolume = order.Volume - (cumVolume - ask.Volume);
+                            matchedOrders.Push(ask);
+                            cumVolume += ask.TradedVolume;
+                            break;
+                        }
+                        // trade not possible
+                        else
+                        {
+                            break;
+                        }
+                    }
+                }
+                // If we got exact volumes to trade for bid order then execute the trade
+                if (cumVolume == order.Volume)
+                {
+                    // trades
+                    AddTrades(CreateTrades(order, matchedOrders));
+                    Orderbook.Remove(matchedOrders.ToList());
+                    result = TradeStatus.Traded;
+                }
+            }
 			return new TradeExecutionResult(result, order.BidPrice, order.Volume);
         }
     }

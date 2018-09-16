@@ -1,4 +1,4 @@
-using StockOrderBook.Entities;
+using EOrderBook.Entities;
 using StockOrderBook.Util;
 using System;
 using System.Collections.Generic;
@@ -48,8 +48,8 @@ namespace StockOrderBook.Strategies
         {
             return BidStrategies[type];
         }
-
-        public override ITradingStrategy GetTradingStrategy(OrderType orderType, TradeType type)
+        
+        public ITradingStrategy GetTradingStrategy(OrderType orderType, TradeType type)
         {
             switch (orderType)
             {

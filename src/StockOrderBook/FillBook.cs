@@ -1,6 +1,8 @@
-﻿using StockOrderBook.Entities;
+﻿using EOrderBook.Entities;
+using StockOrderBook.Util;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,21 +11,42 @@ namespace StockOrderBook
 {
 	public class FillBook : IFillBook
 	{
-		List<Trade> Trades;
+        ObservableCollection<Trade> trades;
+        private string _ticker;
 
-		public FillBook()
+        public FillBook(string ticker)
 		{
-			Trades = new List<Trade>();
+            _ticker = ticker;
+			trades = new ObservableCollection<Trade>();
 		}
 
 		public void Add(Trade trade)
 		{
-			Trades.Add(trade);
+			trades.Add(trade);
 		}
 
 		public void AddRange(IList<Trade> trade)
 		{
-			Trades.AddRange(trade);
+			foreach(Trade t in trade)
+            {
+                trades.Add(t);
+            }
 		}
-	}
+
+        public ObservableCollection<Trade> Trades
+        {
+            get
+            {
+                return trades;
+            }
+        }
+
+        public string Ticker
+        {
+            get
+            {
+                return _ticker;
+            }
+        }
+    }
 }

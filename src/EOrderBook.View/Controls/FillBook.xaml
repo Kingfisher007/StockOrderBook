@@ -1,0 +1,64 @@
+﻿<UserControl x:Class="EOrderBook.View.Controls.FillBook"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:EOrderBook.View.Controls"
+             xmlns:con="clr-namespace:EOrderBook.View.Convertors"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300">
+    <UserControl.Resources>
+        <con:TimeFormatConvertor x:Key="DateConvertor" />
+    </UserControl.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="45" />
+            <RowDefinition />
+            <RowDefinition Height="45" />
+        </Grid.RowDefinitions>
+
+        <Label Grid.Row="0" Background="{StaticResource HeaderBackgroundBrush}" Foreground="{StaticResource HeaderForegroundBrush}" FontSize="{StaticResource HeaderFontWeight}" >
+                Fill Book
+        </Label>
+
+        <StackPanel Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+            <DataGrid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" IsReadOnly="True" AutoGenerateColumns="False" ItemsSource="{Binding Trades}" SelectionMode="Single" SelectionUnit="FullRow" CanUserSortColumns="False" >
+                <!--                 <DataGrid.RowDetailsTemplate>
+                    <DataTemplate>
+                        <Grid MinHeight="50">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="5*" />
+                                <ColumnDefinition Width="5*"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0" Orientation="Vertical">
+                                <Label>Ask</Label>
+                                <Line  />
+                                <Label Content="{Binding AskOrderId}" />
+                            </StackPanel>
+                            <StackPanel Grid.Column="1" Orientation="Vertical">
+                                <Label>Bid</Label>
+                                <Line  />
+                                <Label Content="{Binding BidOrderId}" />
+                            </StackPanel>
+                        </Grid>
+                    </DataTemplate>
+                </DataGrid.RowDetailsTemplate>
+                -->
+                <DataGrid.Columns>
+                    <DataGridTextColumn MinWidth="100" Header="Price" Binding="{Binding Price, StringFormat=N2}" IsReadOnly="True" />
+                    <DataGridTextColumn MinWidth="125" Header="Volume" Binding="{Binding Volume}" IsReadOnly="True" />
+                    <DataGridTextColumn Width="*"  Header="Time" Binding="{Binding Time, Converter={StaticResource DateConvertor}}" IsReadOnly="True"/>
+                </DataGrid.Columns>
+            </DataGrid>
+            
+        </StackPanel>
+
+        <StackPanel Grid.Row="2" Orientation="Horizontal"  Background="{StaticResource HeaderBackgroundBrush}">
+            <Label Foreground="{StaticResource HeaderForegroundBrush}" FontSize="{StaticResource HeaderFontWeight}" >
+                Total volume traded :
+            </Label>
+            <Label Content="{Binding Path=Volume}" Foreground="{StaticResource HeaderForegroundBrush}" FontSize="{StaticResource HeaderFontWeight}"/>
+        </StackPanel>
+        
+    </Grid>
+</UserControl>
